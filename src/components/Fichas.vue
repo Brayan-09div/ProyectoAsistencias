@@ -1,0 +1,234 @@
+<template>
+  <div>
+  <div id="en">
+    <button id="atras"><span class="material-symbols-outlined">arrow_back</span></button>
+    <h1 id="programas">Programas</h1>
+  </div>
+  <hr>
+  <div style="margin: 0px;">
+    <div class="tablafichas">
+      <div style="margin-top: 0px;">
+        <q-btn id="agregarficha" @click="fixed = true" color="primary"><span class="material-symbols-outlined">
+            add_circle
+          </span>Crear</q-btn>
+      </div>
+      <q-table title="Fichas" :rows="rows" :columns="columns" row-key="name">
+        <template v-slot:body-cell-opciones="props">
+          <q-td :props="props">
+            <q-btn @click="traerDatos(props.row)" color="primary">📝</q-btn>
+            <q-btn @click="ides(props.row._id)">🗑️</q-btn>
+            <q-btn @click="activar(props.row._id)" v-if="props.row.estado == 0">✅</q-btn>
+            <q-btn @click="activar(props.row._id)" v-else>❌</q-btn>
+          </q-td>
+        </template>
+        <template v-slot:body-cell-estado1="props">
+          <q-td :props="props">
+            <p style="color:green" v-if="props.row.estado == 1">Activo</p>
+            <p style="color:red" v-else>Inactivo</p>
+          </q-td>
+        </template>
+      </q-table>
+    </div>
+    <q-dialog v-model="fixed" :backdrop-filter="'blur(4px) saturate(150%'" transition-show="rotate"
+      transition-hide="rotate" persistent>
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">{{ b == true ? "Editar Ficha" : "Guardar Ficha" }}</div>
+        </q-card-section>
+        <q-separator />
+        <q-card-section style="max-height: 50vh" class="scroll">
+          <q-input filled v-model="num" label="Nombre De La Ficha" :dense="dense" />
+          <q-input filled v-model="cod" label="Codigo De La Ficha" :dense="dense" />
+        </q-card-section>
+        <q-separator />
+        <q-card-actions align="right">
+          <q-btn flat label="Cerar" color="primary" v-close-popup @click="cerar()" />
+          <q-btn flat label="Guardar" color="primary" @click="crearFicha()" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="confirm" persistent :backdrop-filter="'blur(4px) saturate(150%'" transition-show="rotate"
+      transition-hide="rotate">
+      <q-card>
+        <q-card-section class="row items-center">
+          <span class="q-ml-sm">Seguro Quieres Eliminar La Ficha</span>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="Cancelar" color="primary" v-close-popup />
+          <q-btn @click="eliminarFicha()" flat label="Aceptar" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+    <q-toggle v-model="isDark" label="Modo Oscuro" />
+  </div>
+</div>
+</template>
+
+<script setup>
+import axios from "axios"
+import { onBeforeMount, ref, watch } from "vue";
+import { Notify } from 'quasar'
+import { useQuasar } from 'quasar'
+import { useFichaStore } from "../stores/fichas.js"
+import { Dark } from 'quasar'
+
+const useFicha = useFichaStore()
+
+const $q = useQuasar()
+let confirm = ref(false)
+let r = ref("")
+let fixed = ref(false)
+let num = ref("")
+let cod = ref("")
+let error = ref("")
+let b = ref(false)
+let id = ref("")
+
+const isDark = ref(Dark.isActive);
+watch(isDark, (val) => {
+  Dark.set(val);
+});
+
+const rows = ref([])
+
+onBeforeMount(() => {
+  traer()
+})
+
+function ides(ids) {
+  id.value = ids
+  confirm.value = true
+}
+
+async function traer() {
+  let res = await useFicha.listarFichas()
+  rows.value = res.data
+}
+
+function traerDatos(datos) {
+  console.log(datos);
+  id.value = datos._id
+  fixed.value = true
+  b.value = true
+  num.value = datos.nombre
+  cod.value = datos.codigo
+}
+
+function cerar() {
+  b.value = false
+  num.value = ""
+  cod.value = ""
+}
+
+async function activar(id) {
+  let res = await useFicha.activarDesactivarFichas(id)
+  await traer()
+}
+
+async function crearFicha() {
+  if (b.value == true) {
+    const res = await editarFicha(id)
+    if (res?.response?.data?.errors) {
+      fixed.value = true
+    } else {
+      await traer()
+      fixed.value = false
+    }
+  } else {
+    let res = await useFicha.guardarFicha(cod.value, num.value)
+    if (res?.response?.data?.errors) {
+      fixed.value = true
+    } else {
+      await traer()
+      fixed.value = false
+    }
+  }
+}
+
+async function editarFicha() {
+  let res = await useFicha.editarFicha(id.value, cod.value, num.value)
+  await traer()
+  return res
+}
+
+async function eliminarFicha() {
+  let res = await useFicha.eliminar(id.value)
+  await traer()
+  return res
+}
+
+const columns = ref([
+  {
+    name: 'nombre1', required: true, label: 'Nombre del programa',
+    align: 'center',
+    field: "nombre",
+    sortable: true
+  },
+  { name: 'codigo1', align: 'center', label: 'Numero de ficha', field: 'codigo', sortable: true },
+  { name: 'estado1', align: 'center', label: 'Estado', field: 'estado', sortable: true },
+  { name: 'opciones', label: 'Opciones', align: 'center' },
+])
+</script>
+
+<style scoped>
+#en {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0px;
+  padding-top: 0px;
+}
+
+#programas {
+  font-size: 35px;
+  font-weight: bold;
+  text-align: center;
+  flex-grow: 1;
+  padding-top: 0px;
+  margin-top: 0px;
+  padding-top: 40px;
+  margin-bottom: 0px;
+}
+
+#atras {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  background-color: rgb(8, 73, 55);
+  color: white;
+  margin-left: 25px;
+  margin-bottom: 0px;
+  margin-top: 10px;
+}
+
+hr {
+  width: 80%;
+  border: 2px solid #2F7D32;
+  margin: 0 auto;
+  margin-top: -20px;
+  margin-bottom: 0px
+}
+
+.tablafichas {
+  width: 80%;
+  margin: 0 auto;
+}
+
+#agregarficha {
+  margin: 0 auto;
+  margin-bottom: 20px;
+  margin-top: 30px;
+  background-color: #2F7D32 !important;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+#agregarficha .material-symbols-outlined {
+  font-size: 19px;
+  margin-right: 5px;
+}
+</style>
