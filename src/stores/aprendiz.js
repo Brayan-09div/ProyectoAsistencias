@@ -6,7 +6,7 @@ import { Notify } from "quasar";
 
 
 export const useAprendizStore = defineStore("Aprendiz", () => {
-  
+  const store = ref("store");
     const listarAprendiz = async () => {
         try {
             let r = await axios.get("http://localhost:4500/api/Aprendices/Listar");
@@ -116,6 +116,8 @@ export const useAprendizStore = defineStore("Aprendiz", () => {
     return {
         listarAprendiz,
         eliminarAprendiz,
+        store,
+
      
     };
 }, { persist: true });
