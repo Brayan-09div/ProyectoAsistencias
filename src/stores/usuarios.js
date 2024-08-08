@@ -7,7 +7,7 @@ export const useUsuariosStore = defineStore("usuario", () => {
     let xtoken = ref("");
     const listarUsuarios = async () => {
         try {
-          let r = await axios.get("http://localhost:4500/api/Usuarios/listar");
+          let r = await axios.get("/Usuarios/listar");
           console.log(r);
           return r;
         } catch (error) {
@@ -18,7 +18,7 @@ export const useUsuariosStore = defineStore("usuario", () => {
 
       const loguin = async (email, password)=>{
         try {
-            let r = await axios.post("http://localhost:4500/api/usuarios/login", {
+            let r = await axios.post("/usuarios/login", {
               email: email,
               password: password,
             });

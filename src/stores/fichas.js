@@ -9,7 +9,7 @@ export const useFichaStore = defineStore("ficha", () => {
   let token = ref("");
   const listarFichas = async () => {
     try {
-      let r = await axios.get("http://localhost:4500/api/Fichas/listar");
+      let r = await axios.get("/Fichas/listar");
       console.log(r);
       return r;
     } catch (error) {
@@ -21,7 +21,7 @@ export const useFichaStore = defineStore("ficha", () => {
     console.log(id);
     try {
       let r = await axios.put(
-        `http://localhost:4500/api/Fichas/activarDesactivar/${id}`
+        `/Fichas/activarDesactivar/${id}`
       );
       console.log(r);
       return r;
@@ -33,7 +33,7 @@ export const useFichaStore = defineStore("ficha", () => {
 
   const guardarFicha = async (cod, nom) => {
     try {
-      let r = await axios.post("http://localhost:4500/api/Fichas", {
+      let r = await axios.post("/Fichas", {
         codigo: cod,
         nombre: nom,
       });
@@ -62,7 +62,7 @@ export const useFichaStore = defineStore("ficha", () => {
     console.log(id);
     try {
       let r = await axios.put(
-        `http://localhost:4500/api/Fichas/editar/${id}`,
+        `/Fichas/editar/${id}`,
         { codigo: cod, nombre: nom }
       );
       console.log(r);
@@ -87,7 +87,7 @@ export const useFichaStore = defineStore("ficha", () => {
 
   const eliminar = async (id) =>{
     try {
-      let r = await axios.delete(`http://localhost:4500/api/Fichas/eliminar/${id}`);
+      let r = await axios.delete(`/Fichas/eliminar/${id}`);
       console.log(r);
       Notify.create({
         color: "positive",

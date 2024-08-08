@@ -42,7 +42,7 @@ async function loguin() {
   try {
     let res = await useUsuarios.loguin(email.value, password.value);
     console.log(res);
-    if (res?.response?.data?.errors) {
+    if (res?.response?.data?.errors || res?.response?.data?.msg) {
       console.error('Error en el inicio de sesión:', res.message);
     } else {
       router.replace("/fichas");
