@@ -30,8 +30,11 @@
                     <q-separator />
 
                     <q-card-section style="max-height: 50vh" class="scroll">
-                        <q-input filled v-model="num" label="Nombre De La Ficha" :dense="dense" />
-                        <q-input filled v-model="cod" label="Codigo De La Ficha" :dense="dense" />
+                        <q-input filled v-model="nom" label="Nombre Del Aprendiz" :dense="dense" />
+                        <q-input filled v-model="cc" label="CC" :dense="dense" />
+                        <q-input filled v-model="IdFicha" label="Id De La Ficha" :dense="dense" />
+                        <q-input filled v-model="email" label="Email del Aprendiz" :dense="dense" />
+                        <q-input filled v-model="telefono" label="Telefono Del Aprendiz" :dense="dense" />
                     </q-card-section>
 
                     <q-separator />
@@ -57,6 +60,9 @@
                     </q-card-actions>
                 </q-card>
             </q-dialog>
+            <div style="display:flex; justify-content: end;">
+                <q-btn @click="fixed = true" color="primary">Agregar Aprendiz</q-btn>
+            </div>
             <q-toggle v-model="isDark" label="Modo Oscuro" />
         </div>
     </div>
@@ -75,8 +81,11 @@ const $q = useQuasar()
 let confirm = ref(false)
 let r = ref("")
 let fixed = ref(false)
-let num = ref("")
-let cod = ref("")
+let nom = ref("")
+let cc = ref("")
+let IdFicha = ref("")
+let email = ref("")
+let telefono = ref("")
 let error = ref("")
 let b = ref(false)
 let id = ref("")
@@ -111,9 +120,11 @@ function traerDatos(datos) {
     id.value = datos._id
     fixed.value = true
     b.value = true
-    num.value = datos.nombre
-    cod.value = datos.codigo
-
+    nom.value = datos.nombre
+    cc.value = datos.cc
+    email.value = datos.email
+    telefono.value = datos.telefono
+    IdFicha.value = datos.IdFicha
 }
 
 function cerar() {
@@ -123,9 +134,8 @@ function cerar() {
 }
 
 async function activar(id) {
-    let res = await useAprendiz.activarDesactivarFichas(id)
+    let res = await useAprendiz.activarDesactivarAprendiz(id)
     await traer()
-
 }
 
 async function crearFicha() {
@@ -138,19 +148,18 @@ async function crearFicha() {
             fixed.value = false
         }
     } else {
-        let res = await useAprendiz.guardarFicha(cod.value, num.value)
+        let res = await useAprendiz.guardarAprendis(cc.value, nom.value, email.value, telefono.value, IdFicha.value)
         if (res?.response?.data?.errors) {
             fixed.value = true
         } else {
             await traer()
             fixed.value = false
-
         }
     }
 }
 
 async function editarFicha() {
-    let res = await useAprendiz.editarFicha(id.value, cod.value, num.value)
+    let res = await useAprendiz.editarAprendiz(id.value, cc.value, nom.value, email.value, telefono.value, IdFicha.value)
     await traer()
     return res
 }
@@ -176,7 +185,6 @@ const columns = ref([
     { name: 'IdFicha1', align: 'center', label: 'Numero De Ficha', field: (row) => row?.IdFicha?.nombre, sortable: true },
     { name: 'estado1', align: 'center', label: 'Estado', field: 'estado', sortable: true },
     { name: 'opciones', label: 'Opciones', align: 'center' },
-
 ])
 
 
