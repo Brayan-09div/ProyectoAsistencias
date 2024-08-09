@@ -40,7 +40,6 @@ export const useAprendizStore = defineStore("Aprendiz", () => {
           console.log(r);
           return r;
         } catch (error) {
-          console.log(error);
           return error;
         }
       };
