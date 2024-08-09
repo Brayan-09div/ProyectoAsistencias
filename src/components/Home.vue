@@ -48,6 +48,17 @@
                 Aprendiz
               </q-item-section>
             </q-item>
+
+
+            <q-item clickable to="/bitacoras" v-ripple>
+              <q-item-section avatar>
+                <q-icon name="person" />
+              </q-item-section>
+  
+              <q-item-section>
+                Bitacoras
+              </q-item-section>
+            </q-item>
   
             <q-item clickable to="/fichas" v-ripple>
               <q-item-section avatar>
