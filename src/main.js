@@ -3,6 +3,7 @@ import { Quasar, Dialog, Notify, Dark } from 'quasar'
 import {createPinia} from 'pinia'
 import {router} from './routes/routes.js'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+import  axios from 'axios'
 
 // Import icon libraries
 import '@quasar/extras/material-icons/material-icons.css'
@@ -13,6 +14,7 @@ import 'quasar/src/css/index.sass'
 // Assumes your root component is App.vue
 // and placed in same folder as main.js
 import App from './App.vue'
+axios.defaults.baseURL = "http://localhost:4500/api";
 
 
 const myApp = createApp(App)

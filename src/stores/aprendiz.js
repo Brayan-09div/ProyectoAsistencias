@@ -2,14 +2,21 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import axios from "axios";
 import { Notify } from "quasar";
+import { useUsuariosStore } from "../stores/usuarios.js"
 
 
 
 export const useAprendizStore = defineStore("Aprendiz", () => {
-  const store = ref("store");
+    const useUsuarios = useUsuariosStore()
+
+    const store = ref("store");
     const listarAprendiz = async () => {
         try {
-            let r = await axios.get("http://localhost:4500/api/Aprendices/Listar");
+            let r = await axios.get("/Aprendices/Listar", {
+                headers: {
+                    "x-token": useUsuarios.xtoken,
+                },
+            });
             console.log(r);
             return r;
         } catch (error) {
@@ -18,33 +25,48 @@ export const useAprendizStore = defineStore("Aprendiz", () => {
         }
     };
 
-    
-    const activarDesactivarFichas = async (id) => {
+    const activarDesactivarAprendiz = async (id) => {
         console.log(id);
         try {
-            let r = await axios.put(
-                `http://localhost:4500/api/Fichas/activarDesactivar/${id}`
-            );
-            console.log(r);
-            return r;
+          let r = await axios.put(
+            `/Aprendices/activarDesactivar/${id}`, 
+          {},
+            {
+              headers: {
+                "x-token": useUsuarios.xtoken, 
+              },
+            }
+          );
+          console.log(r);
+          return r;
         } catch (error) {
-            console.log(error);
-            return error;
+          return error;
         }
-    };
+      };
+      
 
-
-    const guardarFicha = async (cod, nom) => {
+    const guardarAprendis = async (cc, nom, email, telefono, IdFicha) => {
         try {
-            let r = await axios.post("http://localhost:4500/api/Fichas", {
-                codigo: cod,
-                nombre: nom,
-            });
+            let r = await axios.post(
+                "/Aprendices",
+                {
+                    cc: cc,
+                    nombre: nom,
+                    email: email,
+                    telefono: telefono,
+                    IdFicha: IdFicha
+                },
+                {
+                    headers: {
+                        "x-token": useUsuarios.xtoken, 
+                    },
+                }
+            );
             console.log(r);
             Notify.create({
                 color: "positive",
                 message: "Registro exitoso",
-                icon: "error",
+                icon: "check_circle", 
                 timeout: 2500,
             });
             return r;
@@ -52,23 +74,31 @@ export const useAprendizStore = defineStore("Aprendiz", () => {
             console.log(error);
             Notify.create({
                 color: "negative",
-                message: error.response.data.errors[0].msg,
+                message: error.response?.data?.errors[0]?.msg || "Error desconocido",
                 icon: "error",
                 timeout: 2500,
             });
-
             return error;
         }
     };
 
 
 
-    const editarFicha = async (id, cod, nom) => {
+    const editarAprendiz = async (id, cc, nom, email, telefono, IdFicha) => {
         console.log(id);
         try {
             let r = await axios.put(
-                `http://localhost:4500/api/Fichas/editar/${id}`,
-                { codigo: cod, nombre: nom }
+                `/Aprendices/editar/${id}`,
+                {   cc: cc,
+                    nombre: nom,
+                    email: email,
+                    telefono: telefono,
+                    IdFicha: IdFicha
+                },  {
+                    headers: {
+                        "x-token": useUsuarios.xtoken, 
+                    },
+                }
             );
             console.log(r);
             Notify.create({
@@ -92,7 +122,11 @@ export const useAprendizStore = defineStore("Aprendiz", () => {
 
     const eliminarAprendiz = async (id) => {
         try {
-            let r = await axios.delete(`http://localhost:4500/api/Fichas/eliminar/${id}`);
+            let r = await axios.delete(`/Aprendices/eliminar/${id}`,  {
+                headers: {
+                    "x-token": useUsuarios.xtoken, 
+                },
+            });
             console.log(r);
             Notify.create({
                 color: "positive",
@@ -116,8 +150,11 @@ export const useAprendizStore = defineStore("Aprendiz", () => {
     return {
         listarAprendiz,
         eliminarAprendiz,
+        guardarAprendis,
+        editarAprendiz,
+        activarDesactivarAprendiz,
         store,
 
-     
+
     };
 }, { persist: true });

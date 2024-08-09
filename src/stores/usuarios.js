@@ -5,9 +5,12 @@ import { Notify } from "quasar";
 
 export const useUsuariosStore = defineStore("usuario", () => {
     let xtoken = ref("");
+    let usuarios = ref("")
+    let loading = ref("")
+
     const listarUsuarios = async () => {
         try {
-          let r = await axios.get("http://localhost:4500/api/Usuarios/listar");
+          let r = await axios.get("/Usuarios/listar");
           console.log(r);
           return r;
         } catch (error) {
@@ -15,14 +18,14 @@ export const useUsuariosStore = defineStore("usuario", () => {
           return error;
         }
       };
-
       const loguin = async (email, password)=>{
         try {
-            let r = await axios.post("http://localhost:4500/api/usuarios/login", {
+            let r = await axios.post("/usuarios/login", {
               email: email,
               password: password,
             });
             xtoken.value = r.data.token;
+            usuarios.value=r.data
             Notify.create({
               type: "positive",
               message: "Loguin exitoso",
@@ -47,7 +50,8 @@ export const useUsuariosStore = defineStore("usuario", () => {
         listarUsuarios,
         loguin,
         logout,
-        xtoken
+        xtoken,
+        usuarios 
     };
 
   },{ persist : true});
