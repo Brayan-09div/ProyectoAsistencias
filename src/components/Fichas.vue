@@ -31,9 +31,37 @@
           </template>
         </q-table>
       </div>
-      <!-- Dialogs y otros elementos permanecen igual -->
     </div>
-  </div>
+      <q-dialog v-model="fixed" :backdrop-filter="'blur(4px) saturate(150%'" transition-show="rotate" transition-hide="rotate" persistent>
+        <q-card>
+          <q-card-section>
+            <div class="text-h6">{{ b == true ? "Editar Ficha" : "Guardar Ficha" }}</div>
+          </q-card-section>
+          <q-separator />
+          <q-card-section style="max-height: 50vh" class="scroll">
+            <q-input filled v-model="num" label="Nombre De La Ficha" :dense="dense" />
+            <q-input filled v-model="cod" label="Codigo De La Ficha" :dense="dense" />
+          </q-card-section>
+          <q-separator />
+          <q-card-actions align="right">
+            <q-btn flat label="Cerrar" color="primary" v-close-popup @click="cerar()" />
+            <q-btn flat label="Guardar" color="primary" @click="crearFicha()" />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-dialog v-model="confirm" persistent :backdrop-filter="'blur(4px) saturate(150%'" transition-show="rotate" transition-hide="rotate">
+        <q-card>
+          <q-card-section class="row items-center">
+            <span class="q-ml-sm">Seguro Quieres Eliminar La Ficha</span>
+          </q-card-section>
+          <q-card-actions align="right">
+            <q-btn flat label="Cancelar" color="primary" v-close-popup />
+            <q-btn @click="eliminarFicha()" flat label="Aceptar" color="primary" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-toggle v-model="isDark" label="Modo Oscuro" />
+    </div>
 </template>
 
 <script setup>
