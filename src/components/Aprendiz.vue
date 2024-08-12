@@ -42,7 +42,7 @@
                                 </q-item>
                             </template>
                         </q-select>
-                        <q-input filled v-model="email" label="Email del Aprendiz" :dense="dense" />
+                        <q-input type="email" filled v-model="email" label="Email del Aprendiz" :dense="dense" />
                         <q-input filled v-model="telefono" label="Telefono Del Aprendiz" :dense="dense" />
                     </q-card-section>
 
@@ -50,7 +50,7 @@
 
                     <q-card-actions align="right">
                         <q-btn flat label="Cerar" color="primary" v-close-popup @click="cerar()" />
-                        <q-btn flat label="Guardar" color="primary" @click="crearFicha()" />
+                        <q-btn flat label="Guardar" color="primary" @click="crearAprendiz()" />
                     </q-card-actions>
                 </q-card>
             </q-dialog>
@@ -103,6 +103,8 @@ let id = ref("")
 let fichas =ref([])
 let options = ref(fichas.value)
 let dates = ref({})
+let ccOriginal = ref("")
+let emailOriginal = ref("")
 const isDark = ref(Dark.isActive);
 watch(isDark, (val) => {
     Dark.set(val);
@@ -152,7 +154,12 @@ function traerDatos(datos) {
     cc.value = datos.cc
     email.value = datos.email
     telefono.value = datos.telefono
-    IdFicha.value = datos.IdFicha
+    IdFicha.value = { 
+        label: datos.IdFicha.nombre,
+        value: datos.IdFicha._id
+    }
+    ccOriginal.value = datos.cc
+    emailOriginal.value = datos.email
 }
 
 function cerar() {
@@ -166,9 +173,9 @@ async function activar(id) {
     await traer()
 }
 
-async function crearFicha() {
+async function crearAprendiz() {
     if (b.value == true) {
-        const res = await editarFicha(id)
+        const res = await editarAprendiz(id)
         if (res?.response?.data?.errors) {
             fixed.value = true
         } else {
@@ -186,10 +193,27 @@ async function crearFicha() {
     }
 }
 
-async function editarFicha() {
-    let res = await useAprendiz.editarAprendiz(id.value, cc.value, nom.value, email.value, telefono.value, IdFicha.value)
-    await traer()
-    return res
+async function editarAprendiz() {
+    const datosActualizados = {};
+
+    if (cc.value !== ccOriginal.value) {
+        datosActualizados.cc = cc.value;
+    }
+    if (email.value !== emailOriginal.value) {
+        datosActualizados.email = email.value;
+    }
+    if (nom.value) {
+        datosActualizados.nombre = nom.value;
+    }
+    if (telefono.value) {
+        datosActualizados.telefono = telefono.value;
+    }
+    if (IdFicha.value) {
+        datosActualizados.IdFicha = IdFicha.value.value;
+    }
+    let res = await useAprendiz.editarAprendiz(id.value, datosActualizados);
+    await traer();
+    return res;
 }
 
 async function eliminarAprendiz() {

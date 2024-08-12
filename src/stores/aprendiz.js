@@ -84,17 +84,12 @@ export const useAprendizStore = defineStore("Aprendiz", () => {
 
 
 
-    const editarAprendiz = async (id, cc, nom, email, telefono, IdFicha) => {
+    const editarAprendiz = async (id, data) => {
         console.log(id);
         try {
             let r = await axios.put(
                 `/Aprendices/editar/${id}`,
-                {   cc: cc,
-                    nombre: nom,
-                    email: email,
-                    telefono: telefono,
-                    IdFicha: IdFicha
-                },  {
+                data,  {
                     headers: {
                         "x-token": useUsuarios.xtoken, 
                     },
