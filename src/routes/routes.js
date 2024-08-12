@@ -4,7 +4,8 @@ import aprendiz from '../components/Aprendiz.vue'
 import usuario from '../components/Usuario.vue'
 import bitacoras from '../components/Bitacoras.vue'
 import loguin from '../components/Loguin.vue'
-
+import inscripcion from '../components/inscripcion.vue'
+import perfil from '../components/Perfil.vue'
 
 import { createRouter, createWebHashHistory } from 'vue-router'
 
@@ -16,9 +17,10 @@ const routes = [
         { path: '/aprendiz', component: aprendiz },
         { path: '/usuario', component: usuario },
         { path: '/bitacoras', component: bitacoras },
+        { path: '/perfil', component: perfil },
     ] },
-    
-    {path: '/',  component: loguin}
+    {path: '/',  component: inscripcion},
+    {path: '/loguin',  component: loguin}
 ]
 
 export const router = createRouter({

@@ -164,8 +164,11 @@ function traerDatos(datos) {
 
 function cerar() {
     b.value = false
-    num.value = ""
-    cod.value = ""
+    nom.value = ""
+    cc.value = ""
+    email.value = ""
+    telefono.value = ""
+    IdFicha.value = ""
 }
 
 async function activar(id) {
@@ -176,6 +179,7 @@ async function activar(id) {
 async function crearAprendiz() {
     if (b.value == true) {
         const res = await editarAprendiz(id)
+        cerar()
         if (res?.response?.data?.errors) {
             fixed.value = true
         } else {
@@ -213,6 +217,7 @@ async function editarAprendiz() {
     }
     let res = await useAprendiz.editarAprendiz(id.value, datosActualizados);
     await traer();
+    cerar()
     return res;
 }
 
