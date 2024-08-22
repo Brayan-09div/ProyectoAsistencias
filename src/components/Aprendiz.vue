@@ -32,8 +32,17 @@
                     <q-card-section style="max-height: 50vh" class="scroll">
                         <q-input filled v-model="nom" label="Nombre Del Aprendiz" :dense="dense" />
                         <q-input filled v-model="cc" label="CC" :dense="dense" />
-                        <q-input filled v-model="IdFicha" label="Id De La Ficha" :dense="dense" />
-                        <q-input filled v-model="email" label="Email del Aprendiz" :dense="dense" />
+                        <q-select rounded outlined v-model="IdFicha" use-input hide-selected fill-input input-debounce="0"
+                            :options="options" @filter="filterFn" label="Selecciona una ficha">
+                            <template v-slot:no-option>
+                                <q-item>
+                                    <q-item-section class="text-grey">
+                                        Sin resultados
+                                    </q-item-section>
+                                </q-item>
+                            </template>
+                        </q-select>
+                        <q-input type="email" filled v-model="email" label="Email del Aprendiz" :dense="dense" />
                         <q-input filled v-model="telefono" label="Telefono Del Aprendiz" :dense="dense" />
                     </q-card-section>
 
@@ -41,7 +50,7 @@
 
                     <q-card-actions align="right">
                         <q-btn flat label="Cerar" color="primary" v-close-popup @click="cerar()" />
-                        <q-btn flat label="Guardar" color="primary" @click="crearFicha()" />
+                        <q-btn flat label="Guardar" color="primary" @click="crearAprendiz()" />
                     </q-card-actions>
                 </q-card>
             </q-dialog>
@@ -73,9 +82,11 @@ import { onBeforeMount, ref, watch } from "vue";
 import { Notify } from 'quasar'
 import { useQuasar } from 'quasar'
 import { useAprendizStore } from "../stores/aprendiz.js"
+import { useFichaStore } from '../stores/fichas.js';
 import { Dark } from 'quasar'
 
 const useAprendiz = useAprendizStore()
+const useFicha = useFichaStore();
 
 const $q = useQuasar()
 let confirm = ref(false)
@@ -89,7 +100,11 @@ let telefono = ref("")
 let error = ref("")
 let b = ref(false)
 let id = ref("")
-
+let fichas =ref([])
+let options = ref(fichas.value)
+let dates = ref({})
+let ccOriginal = ref("")
+let emailOriginal = ref("")
 const isDark = ref(Dark.isActive);
 watch(isDark, (val) => {
     Dark.set(val);
@@ -100,6 +115,7 @@ const rows = ref([])
 
 onBeforeMount(() => {
     traer()
+
 })
 
 function ides(ids) {
@@ -107,9 +123,23 @@ function ides(ids) {
     confirm.value = true
 }
 
-
+function filterFn(val, update, abort) {
+    update(() => {
+        const needle = val.toLowerCase();
+        options.value = fichas.value.filter(v => v.label.toLowerCase().indexOf(needle) > -1);
+    });
+};
+ 
 async function traer() {
-    let res = await useAprendiz.listarAprendiz()
+    let res = await useAprendiz.listarAprendiz();
+    let ris = await useFicha.listarFichas();
+    ris.data.forEach(item => {
+        dates.value={
+            label: item.nombre,
+            value: item._id
+        }
+        fichas.value.push(dates.value)
+    });
     rows.value = res.data
 }
 
@@ -124,13 +154,21 @@ function traerDatos(datos) {
     cc.value = datos.cc
     email.value = datos.email
     telefono.value = datos.telefono
-    IdFicha.value = datos.IdFicha
+    IdFicha.value = { 
+        label: datos.IdFicha.nombre,
+        value: datos.IdFicha._id
+    }
+    ccOriginal.value = datos.cc
+    emailOriginal.value = datos.email
 }
 
 function cerar() {
     b.value = false
-    num.value = ""
-    cod.value = ""
+    nom.value = ""
+    cc.value = ""
+    email.value = ""
+    telefono.value = ""
+    IdFicha.value = ""
 }
 
 async function activar(id) {
@@ -138,9 +176,10 @@ async function activar(id) {
     await traer()
 }
 
-async function crearFicha() {
+async function crearAprendiz() {
     if (b.value == true) {
-        const res = await editarFicha(id)
+        const res = await editarAprendiz(id)
+        cerar()
         if (res?.response?.data?.errors) {
             fixed.value = true
         } else {
@@ -148,7 +187,7 @@ async function crearFicha() {
             fixed.value = false
         }
     } else {
-        let res = await useAprendiz.guardarAprendis(cc.value, nom.value, email.value, telefono.value, IdFicha.value)
+        let res = await useAprendiz.guardarAprendis(cc.value, nom.value, email.value, telefono.value, IdFicha.value.value)
         if (res?.response?.data?.errors) {
             fixed.value = true
         } else {
@@ -158,10 +197,28 @@ async function crearFicha() {
     }
 }
 
-async function editarFicha() {
-    let res = await useAprendiz.editarAprendiz(id.value, cc.value, nom.value, email.value, telefono.value, IdFicha.value)
-    await traer()
-    return res
+async function editarAprendiz() {
+    const datosActualizados = {};
+
+    if (cc.value !== ccOriginal.value) {
+        datosActualizados.cc = cc.value;
+    }
+    if (email.value !== emailOriginal.value) {
+        datosActualizados.email = email.value;
+    }
+    if (nom.value) {
+        datosActualizados.nombre = nom.value;
+    }
+    if (telefono.value) {
+        datosActualizados.telefono = telefono.value;
+    }
+    if (IdFicha.value) {
+        datosActualizados.IdFicha = IdFicha.value.value;
+    }
+    let res = await useAprendiz.editarAprendiz(id.value, datosActualizados);
+    await traer();
+    cerar()
+    return res;
 }
 
 async function eliminarAprendiz() {

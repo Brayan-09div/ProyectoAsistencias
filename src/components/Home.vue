@@ -12,48 +12,63 @@
           </q-btn>
         </q-toolbar>
       </q-header>
-  
-      <q-drawer v-model="leftDrawerOpen" :width="250" side="left" overlay behavior="mobile" class="bg-black" dark elevated>
-        <q-img class="absolute-top" src="https://cdn.quasar.dev/img/material.png" style="height: 150px" >
-          <div class="absolute-bottom bg-transparent">
-            <q-avatar size="60px" class="q-mb-sm">
-              <img src="https://cdn.quasar.dev/img/boy-avatar.png">
-            </q-avatar>
-            <div class="text-weight-bold">Nombre</div>
-          </div>
-        </q-img>
-  
+
+      <q-drawer v-model="leftDrawerOpen" :width="250" side="left" overlay behavior="mobile" class="bg-black" dark
+        elevated>
+        <router-link to="/perfil" class="text-weight-bold">
+          <q-img class="absolute-top" src="https://cdn.quasar.dev/img/material.png" style="height: 150px">
+            <div class="absolute-bottom bg-transparent">
+              <q-avatar size="60px" class="q-mb-sm">
+                <img src="https://cdn.quasar.dev/img/boy-avatar.png">
+              </q-avatar>
+
+              <div>Nombre</div>
+            </div>
+          </q-img>
+        </router-link>
+
         <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd">
           <q-list padding>
-            
-  
+
+
 
             <q-item clickable to="/usuario" v-ripple>
               <q-item-section avatar>
                 <q-icon name="person" />
               </q-item-section>
-  
+
               <q-item-section>
                 Usuarios
               </q-item-section>
             </q-item>
 
-            
+
             <q-item clickable to="/aprendiz" v-ripple>
               <q-item-section avatar>
                 <q-icon name="person" />
               </q-item-section>
-  
+
               <q-item-section>
                 Aprendiz
               </q-item-section>
             </q-item>
-  
+
+
+            <q-item clickable to="/bitacoras" v-ripple>
+              <q-item-section avatar>
+                <q-icon name="person" />
+              </q-item-section>
+
+              <q-item-section>
+                Bitacoras
+              </q-item-section>
+            </q-item>
+
             <q-item clickable to="/fichas" v-ripple>
               <q-item-section avatar>
                 <q-icon name="document" />
               </q-item-section>
-  
+
               <q-item-section>
                 Fichas
               </q-item-section>
@@ -62,9 +77,9 @@
         </q-scroll-area>
       </q-drawer>
 
-    <div>
-       <Router-view/>
-    </div>
+      <div>
+        <Router-view />
+      </div>
 
       <q-footer elevated class="bg-black text-white">
         <q-toolbar style="background-color: #307e35">
@@ -75,38 +90,36 @@
       </q-footer>
     </q-layout>
   </div>
-  </template>
-  
-  <script setup>
-  import { ref } from 'vue';
-  import { RouterView } from 'vue-router'
-  import { useRouter } from "vue-router";
-  import {useUsuariosStore} from "../stores/usuarios"
-  const router = useRouter();
-  let useUsuarios = useUsuariosStore()
-  const leftDrawerOpen = ref(false);
-  
-  const toggleLeftDrawer = () => {
-    leftDrawerOpen.value = !leftDrawerOpen.value;
-  };
-  
-  
-   const Salir = async ( ) =>{
-    const res = await useUsuarios.logout()
-    router.replace("/")
-    console.log(res);
-    
-  }
-  
-  </script>
-  
-  
-  <style>
-  .material-symbols-outlined {
-    margin: 0px;
-    padding: 0px;
-    font-size: 30px;
-  }
-  
-  </style>
-  
+</template>
+
+<script setup>
+import { ref } from 'vue';
+import { RouterView } from 'vue-router'
+import { useRouter } from "vue-router";
+import { useUsuariosStore } from "../stores/usuarios"
+const router = useRouter();
+let useUsuarios = useUsuariosStore()
+const leftDrawerOpen = ref(false);
+
+const toggleLeftDrawer = () => {
+  leftDrawerOpen.value = !leftDrawerOpen.value;
+};
+
+
+const Salir = async () => {
+  const res = await useUsuarios.logout()
+  router.replace("/")
+  console.log(res);
+
+}
+
+</script>
+
+
+<style>
+.material-symbols-outlined {
+  margin: 0px;
+  padding: 0px;
+  font-size: 30px;
+}
+</style>

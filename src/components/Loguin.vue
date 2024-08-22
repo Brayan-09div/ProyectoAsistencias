@@ -48,7 +48,7 @@ async function loguin() {
     if (res?.response?.data?.errors || res?.response?.data?.msg) {
       console.error('Error en el inicio de sesión:', res.message);
     } else {
-      router.replace("/fichas");
+      router.replace("/home ");
     }
   } catch (error) {
     console.error('Error en el inicio de sesión:', error.message);
