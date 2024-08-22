@@ -15,9 +15,14 @@
         <q-table :rows="rows" :columns="columns" row-key="codigo">
           <template class="tabla" v-slot:body-cell-opciones="props">
             <q-td :props="props">
-              <q-btn @click="traerDatos(props.row)" color="primary">📝</q-btn>
-              <q-btn @click="ides(props.row._id)">🗑️</q-btn>
+              <q-btn id="edit" @click="traerDatos(props.row)" color="primary"><span class="material-symbols-outlined">edit</span></q-btn>
+              <q-btn id="delete" @click="ides(props.row._id)"><span class="material-symbols-outlined">close</span></q-btn>
             </q-td>
+           </template>
+          <template v-slot:header-cell="props">
+           <q-th :props="props" :style="{ fontWeight: 'bold', color: 'black', fontSize: '16px' }">
+            {{ props.col.label }}
+            </q-th>
           </template>
           <template v-slot:body-cell-estado="props">
             <q-td :props="props">
@@ -215,6 +220,7 @@ hr {
 .tablafichas {
   width: 80%;
   margin: 0 auto;
+  margin-bottom: 60px
 }
 
 #agregarficha {
@@ -231,4 +237,19 @@ hr {
   margin-right: 5px;
 }
 
+#delete{
+  background-color: red;
+  border-radius: 70%;
+  margin: 5px;
+  width: 37px;
+  color: white;
+}
+
+#edit{
+  background-color: rgb(28, 75, 51) !important;
+  border-radius: 70%;
+  margin: 5px;
+  width: 37px;
+  color: white;
+}
 </style>
