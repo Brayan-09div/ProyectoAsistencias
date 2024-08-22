@@ -15,9 +15,14 @@
         <q-table :rows="rows" :columns="columns" row-key="codigo">
           <template class="tabla" v-slot:body-cell-opciones="props">
             <q-td :props="props">
-              <q-btn @click="traerDatos(props.row)" color="primary">📝</q-btn>
-              <q-btn @click="ides(props.row._id)">🗑️</q-btn>
+              <q-btn id="edit" @click="traerDatos(props.row)" color="primary"><span class="material-symbols-outlined">edit</span></q-btn>
+              <q-btn id="delete" @click="ides(props.row._id)"><span class="material-symbols-outlined">close</span></q-btn>
             </q-td>
+           </template>
+          <template v-slot:header-cell="props">
+           <q-th :props="props" :style="{ fontWeight: 'bold', color: 'black', fontSize: '16px' }">
+            {{ props.col.label }}
+            </q-th>
           </template>
           <template v-slot:body-cell-estado="props">
             <q-td :props="props">
@@ -70,9 +75,38 @@
             </q-dialog>
             <q-toggle v-model="isDark" label="Modo Oscuro" />
       </div>
-      
+
     </div>
-  </div>
+      <q-dialog v-model="fixed" :backdrop-filter="'blur(4px) saturate(150%'" transition-show="rotate" transition-hide="rotate" persistent>
+        <q-card>
+          <q-card-section>
+            <div class="text-h6">{{ b == true ? "Editar Ficha" : "Guardar Ficha" }}</div>
+          </q-card-section>
+          <q-separator />
+          <q-card-section style="max-height: 50vh" class="scroll">
+            <q-input filled v-model="num" label="Nombre De La Ficha" :dense="dense" />
+            <q-input filled v-model="cod" label="Codigo De La Ficha" :dense="dense" />
+          </q-card-section>
+          <q-separator />
+          <q-card-actions align="right">
+            <q-btn flat label="Cerrar" color="primary" v-close-popup @click="cerar()" />
+            <q-btn flat label="Guardar" color="primary" @click="crearFicha()" />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-dialog v-model="confirm" persistent :backdrop-filter="'blur(4px) saturate(150%'" transition-show="rotate" transition-hide="rotate">
+        <q-card>
+          <q-card-section class="row items-center">
+            <span class="q-ml-sm">Seguro Quieres Eliminar La Ficha</span>
+          </q-card-section>
+          <q-card-actions align="right">
+            <q-btn flat label="Cancelar" color="primary" v-close-popup />
+            <q-btn @click="eliminarFicha()" flat label="Aceptar" color="primary" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-toggle v-model="isDark" label="Modo Oscuro" />
+    </div>
 </template>
 
 <script setup>
@@ -226,6 +260,7 @@ hr {
 .tablafichas {
   width: 80%;
   margin: 0 auto;
+  margin-bottom: 60px
 }
 
 #agregarficha {
@@ -242,4 +277,19 @@ hr {
   margin-right: 5px;
 }
 
+#delete{
+  background-color: red;
+  border-radius: 70%;
+  margin: 5px;
+  width: 37px;
+  color: white;
+}
+
+#edit{
+  background-color: rgb(28, 75, 51) !important;
+  border-radius: 70%;
+  margin: 5px;
+  width: 37px;
+  color: white;
+}
 </style>

@@ -5,7 +5,7 @@
         <q-toolbar style="background-color: #307e35;">
           <q-btn dense flat round icon="menu" @click="toggleLeftDrawer"></q-btn>
           <q-toolbar-title>
-            REFORA
+            REPFORA
           </q-toolbar-title>
           <q-btn class="btnSalir" @click="Salir()" color="green-9">
             <span class="material-symbols-outlined">logout</span>
