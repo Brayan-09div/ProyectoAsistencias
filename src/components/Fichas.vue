@@ -2,7 +2,7 @@
   <div>
     <div id="en">
       <button id="atras" @click="Salir()"><span class="material-symbols-outlined">arrow_back</span></button>
-      <h1 id="programas">Fichas</h1>
+      <h1 id="programas">Programas</h1>
     </div>
     <hr>
     <div style="margin: 0px;">
@@ -73,7 +73,7 @@
                     </q-card-actions>
                 </q-card>
             </q-dialog>
-            <q-toggle v-model="isDark" label="Modo Oscuro" />
+            <!-- <q-toggle v-model="isDark" label="Modo Oscuro" /> -->
       </div>
 
     </div>
@@ -105,7 +105,7 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
-      <q-toggle v-model="isDark" label="Modo Oscuro" />
+      <!-- <q-toggle v-model="isDark" label="Modo Oscuro" /> -->
     </div>
 </template>
 
@@ -246,7 +246,7 @@ const Salir = async ( ) =>{
   color: white;
   margin-left: 25px;
   margin-bottom: 0px;
-  margin-top: 10px;
+  margin-top: 20px;
 }
 
 hr {
