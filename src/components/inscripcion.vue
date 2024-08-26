@@ -1,6 +1,6 @@
 <template>
     <div class="form-container">
-      <button @click="Salir()">Loguin</button>
+    
       <form>
         <label for="cc">Número de Identificación:</label>
         <input type="text" id="cc" v-model="ccNumber">

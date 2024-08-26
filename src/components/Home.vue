@@ -73,6 +73,17 @@
                 Fichas
               </q-item-section>
             </q-item>
+
+            <q-item clickable to="/isncripcion" v-ripple>
+              <q-item-section avatar>
+                <q-icon name="document" />
+              </q-item-section>
+
+              <q-item-section>
+                Isncripcion
+              </q-item-section>
+            </q-item>
+
           </q-list>
         </q-scroll-area>
       </q-drawer>
