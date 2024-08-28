@@ -21,13 +21,71 @@ export const useBitacoraStore = defineStore("bitacora", () => {
       return error;
     }
   };
+  const listarBitacorasFechaUnica = async (fecha) => {
+    try {
+      let r = await axios.get(`/Bitacoras/ListarFecha/${fecha}`, {
+        headers: {
+          "x-token": useUsuarios.xtoken,
+        },
+      });
+      console.log(r);
+      return r.data;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  };
 
-  // Actualizar estado de una bitácora
+  const listarBitacorasFecha = async (fechaInicio,fechaFin) => {
+    try {
+      let r = await axios.get(`/Bitacoras/ListarFechas/${fechaInicio}/${fechaFin}`, {
+        headers: {
+          "x-token": useUsuarios.xtoken,
+        },
+      });
+      console.log(r);
+      return r.data;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  };
+
+  const listarBitacorasFicha = async (IdFicha)=>{
+    try {
+      let r = await axios.get(`/Bitacoras/ListarFicha/${IdFicha}`, {
+        headers: {
+          "x-token": useUsuarios.xtoken,
+        },
+      });
+      console.log(r);
+      return r.data;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  };
+
+  const listarBitacorasAprendiz = async (idAprendis) => {
+    try {
+      let r = await axios.get(`/Bitacoras/ListarAprendis/${idAprendis}`, {
+        headers: {
+          "x-token": useUsuarios.xtoken,
+        },
+      });
+      console.log(r);
+      return r.data;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  };
+
   const actulizarEstado = async (id, estado) => {
     try {
       let r = await axios.put(
         `/Bitacoras/ActualizarEstado/${id}`,
-        { estado }, // Enviamos el nuevo estado en el body
+        { estado },
         {
           headers: {
             "x-token": useUsuarios.xtoken,
@@ -49,25 +107,13 @@ export const useBitacoraStore = defineStore("bitacora", () => {
     }
   };
 
-  const listarBitacorasPorFechas = async (fechaInicio, fechaFin) => {
-    try {
-      let response = await axios.get("/Bitacoras/ListarPorFechas", {
-        params: { fechaInicio, fechaFin },
-        headers: {
-          "x-token": useUsuarios.xtoken,
-        },
-      });
-      console.log(response);  // Verifica la respuesta completa
-      return response;        // Devuelve la respuesta completa
-    } catch (error) {
-      console.log(error);
-      return { data: [] };   // Devuelve un objeto con un array vacío en caso de error
-    }
-  };
 
   return {
     listarBitacoras,
     actulizarEstado,
-    listarBitacorasPorFechas,
+    listarBitacorasFecha,
+    listarBitacorasFicha,
+    listarBitacorasAprendiz,
+    listarBitacorasFechaUnica,
   };
 });
