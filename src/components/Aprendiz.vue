@@ -91,6 +91,9 @@
   let id = ref("");
   let fichas = ref([]);
   let options = ref(fichas.value);
+
+
+  
   let ccOriginal = ref("");
   let emailOriginal = ref("");
 
@@ -99,13 +102,15 @@
   const ccError = ref(false);
   const emailError = ref(false);
   const telefonoError = ref(false);
+
+  const rows = ref([]);
   
   const isDark = ref(Dark.isActive);
   watch(isDark, (val) => {
       Dark.set(val);
   });
   
-  const rows = ref([]);
+
   
   onBeforeMount(() => {
       traer();

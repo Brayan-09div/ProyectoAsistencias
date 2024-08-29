@@ -22,7 +22,7 @@
                 <img src="https://cdn.quasar.dev/img/boy-avatar.png">
               </q-avatar>
 
-              <div>Nombre</div>
+              <div>{{ useUsuarios.usuarios.usuario.nombre }}</div>
             </div>
           </q-img>
         </router-link>
@@ -111,6 +111,9 @@ import { useUsuariosStore } from "../stores/usuarios"
 const router = useRouter();
 let useUsuarios = useUsuariosStore()
 const leftDrawerOpen = ref(false);
+
+console.log(useUsuarios.usuarios);
+
 
 const toggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value;
