@@ -18,6 +18,7 @@
           </q-toolbar>
         </q-header>
 
+<<<<<<< HEAD
         <q-drawer v-model="leftDrawerOpen" :width="250" side="left" overlay behavior="mobile" class="bg-white" elevated>
           <router-link to="/perfil" class="text-weight-bold">
             <q-img class="absolute-top" src="https://cdn.quasar.dev/img/material.png" style="height: 150px">
@@ -29,6 +30,21 @@
               </div>
             </q-img>
           </router-link>
+=======
+      <q-drawer v-model="leftDrawerOpen" :width="250" side="left" overlay behavior="mobile" class="bg-black" dark
+        elevated>
+        <router-link to="/perfil" class="text-weight-bold">
+          <q-img class="absolute-top" src="https://cdn.quasar.dev/img/material.png" style="height: 150px">
+            <div class="absolute-bottom bg-transparent">
+              <q-avatar size="60px" class="q-mb-sm">
+                <img src="https://cdn.quasar.dev/img/boy-avatar.png">
+              </q-avatar>
+
+              <div>Nombre</div>
+            </div>
+          </q-img>
+        </router-link>
+>>>>>>> afaf9b5eb317962abdccf609fa94c2038e5ff146
 
           <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd">
             <q-list padding>
@@ -142,7 +158,6 @@ const route = useRoute();
 let useUsuarios = useUsuariosStore();
 
 const leftDrawerOpen = ref(false);
-const isHome = ref(route.path === '/home');  // Inicializa según la ruta actual
 
 const toggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value;

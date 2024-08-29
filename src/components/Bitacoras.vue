@@ -4,16 +4,12 @@
       <button id="atras" @click="Salir">
         <span class="material-symbols-outlined">arrow_back</span>
       </button>
-      <h1 id="programas">Bitácoras</h1>
+      <h1 id="programas">Bitacoras</h1>
+      <q-input v-model="fechaInicio" filled type="date" hint="Native date" />
+      <q-input v-model="fechaFin" filled type="date" hint="Native date" />
+      <button @click="listarFechas()">Listar Fechas</button>
     </div>
-    
-    <div class="form-section">
-      <q-input v-model="fechaInicio" filled type="date" hint="Native date" label="Fecha de Inicio" />
-      <q-input v-model="fechaFin" filled type="date" hint="Native date" label="Fecha de Fin" />
-      <button class="primary-btn" @click="listarFechas()">Listar Fechas</button>
-    </div>
-
-    <div class="form-section">
+    <div>
       <q-select
         rounded
         outlined
@@ -34,10 +30,10 @@
           </q-item>
         </template>
       </q-select>
-      <button class="primary-btn" @click="listarBitacorasFicha()">Listar por Ficha</button>
+      <button @click="listarBitacorasFicha()">Listar por Ficha</button>
     </div>
-
-    <div class="form-section">
+    
+    <div>
       <q-select
         rounded
         outlined
@@ -58,12 +54,12 @@
           </q-item>
         </template>
       </q-select>
-      <button class="primary-btn" @click="listarBitacorasAprendiz()">Listar por Aprendiz</button>
+      <button @click="listarBitacorasAprendiz()">Listar por Aprendiz</button>
     </div>
 
-    <div class="form-section">
-      <q-input v-model="fecha" filled type="date" hint="Native date" label="Fecha" />
-      <button class="primary-btn" @click="listarFecha()">Listar Fechas</button>
+    <div>
+      <q-input v-model="fecha" filled type="date" hint="Native date" />
+      <button @click="listarFecha()">Listar Fechas</button>
     </div>
 
     <div class="tablafichas">
@@ -111,40 +107,39 @@
       </q-card>
     </q-dialog>
 
-    <q-dialog
-      v-model="confirm"
-      persistent
-      :backdrop-filter="'blur(4px) saturate(150%)'"
-      transition-show="rotate"
-      transition-hide="rotate"
-    >
-      <q-card>
-        <q-card-section class="row items-center">
-          <span class="q-ml-sm">¿Seguro quieres eliminar la ficha?</span>
-        </q-card-section>
-        <q-card-actions align="right">
-          <q-btn flat label="Cancelar" color="primary" v-close-popup />
-          <q-btn @click="eliminarAprendiz" flat label="Aceptar" color="primary" v-close-popup />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+        <q-dialog
+          v-model="confirm"
+          persistent
+          :backdrop-filter="'blur(4px) saturate(150%)'"
+          transition-show="rotate"
+          transition-hide="rotate"
+        >
+          <q-card>
+            <q-card-section class="row items-center">
+              <span class="q-ml-sm">¿Seguro quieres eliminar la ficha?</span>
+            </q-card-section>
+            <q-card-actions align="right">
+              <q-btn flat label="Cancelar" color="primary" v-close-popup />
+              <q-btn @click="eliminarAprendiz" flat label="Aceptar" color="primary" v-close-popup />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
 
     <q-toggle v-model="isDark" label="Modo Oscuro" class="toggle-btn" />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeMount, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import { ref, onBeforeMount, watch } from 'vue';
 import { Dark, useQuasar } from 'quasar';
 import { useBitacoraStore } from '../stores/bitacoras.js';
 import { useAprendizStore } from "../stores/aprendiz.js";
 import { useFichaStore } from '../stores/fichas.js';
-import { useRouter } from 'vue-router';
 
 const useBitacora = useBitacoraStore();
 const useAprendiz = useAprendizStore();
 const useFicha = useFichaStore();
-
 const router = useRouter();
 const $q = useQuasar();
 
@@ -152,77 +147,62 @@ const confirm = ref(false);
 const fixed = ref(false);
 const isDark = ref(Dark.isActive);
 
-const fecha = ref("");
-const fechaInicio = ref("");
-const fechaFin = ref("");
-const IdFicha = ref("");
-const idAprendis = ref("");
+let fecha = ref("");
 
-const selectedFicha = ref(null);
-const selectedAprendiz = ref(null);
+let fechaInicio = ref("");
+let fechaFin = ref("");
 
-const fichaOptions = ref([]);
-const aprendizOptions = ref([]);
+let IdFicha = ref("");
+
+let idAprendis = ref("");
+
+let fichas = ref([]);
+let options = ref(fichas.value);
+
+let aprendiz = ref([]);
+let optionsAprendiz = ref(aprendiz.value);
+
+
 
 watch(isDark, val => Dark.set(val));
 
-const props = defineProps({
-  modelValue: [String, Object],
-  label: String
+
+onBeforeMount(() => {
+  traer();
 });
 
-const emit = defineEmits(['update:modelValue']);
-
-function filterFichas(val, update) {
+function filterFichas(val, update, abort) {
   update(() => {
     const needle = val.toLowerCase();
-    fichaOptions.value = useFicha.fichas.map(v => ({
-      label: v.nombre,
-      value: v._id
-    })).filter(v => v.label.toLowerCase().includes(needle));
+    options.value = fichas.value.filter(v => v.label.toLowerCase().indexOf(needle) > -1);
   });
 }
 
-function filterAprendices(val, update) {
+function filterAprendiz(val, update, abort) {
   update(() => {
     const needle = val.toLowerCase();
-    aprendizOptions.value = useAprendiz.aprendices.map(v => ({
-      label: v.nombre,
-      value: v._id
-    })).filter(v => v.label.toLowerCase().includes(needle));
+    optionsAprendiz.value = aprendiz.value.filter(v => v.label.toLowerCase().indexOf(needle) > -1);
   });
 }
-
-onMounted(async () => {
-  await useFicha.listarFichas().then(fichas => {
-    fichaOptions.value = fichas.map(v => ({
-      label: v.nombre,
-      value: v._id
-    }));
-  });
-
-  await useAprendiz.listarAprendiz().then(aprendices => {
-    aprendizOptions.value = aprendiz.map(v => ({
-      label: v.nombre,
-      value: v._id
-    }));
-  });
-});
-
-watch(() => props.modelValue, (newVal) => {
-  selectedFicha.value = newVal;
-});
-
-watch(selectedFicha, (newVal) => {
-  emit('update:modelValue', newVal);
-});
 
 const rows = ref([]);
 
-onBeforeMount(traer);
+
 
 async function traer() {
   const res = await useBitacora.listarBitacoras();
+  let ris = await useFicha.listarFichas();
+  fichas.value = ris.data.map(item => ({
+    label: item.nombre,
+    value: item._id
+  }));
+
+  let ros = await useAprendiz.listarAprendiz();
+  aprendiz.value = ros.data.map(item => ({
+    label: item.nombre,
+    value: item._id
+  }));
+
   rows.value = res.map(bitacora => {
     const fecha = new Date(bitacora.fecha);
     const dia = String(fecha.getDate()).padStart(2, '0');
@@ -233,97 +213,173 @@ async function traer() {
   });
 }
 
-function listarFechas() {
-  useBitacora.listarBitacorasFechas(fechaInicio.value, fechaFin.value).then(res => {
-    rows.value = res.map(bitacora => {
-      const fecha = new Date(bitacora.fecha);
-      const dia = String(fecha.getDate()).padStart(2, '0');
-      const mes = String(fecha.getMonth() + 1).padStart(2, '0');
-      const año = fecha.getFullYear();
-      bitacora.fecha = `${dia}/${mes}/${año}`;
-      return bitacora;
+async function listarFechas() {
+  try {
+    const res = await useBitacora.listarBitacorasFecha(fechaInicio.value, fechaFin.value);
+    
+    if (!res?.response?.data?.errors) {
+      rows.value = res.map(bitacora => {
+        const fecha = new Date(bitacora.fecha);
+        const dia = String(fecha.getDate()).padStart(2, '0');
+        const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+        const año = fecha.getFullYear();
+        bitacora.fecha = `${dia}/${mes}/${año}`;
+        return bitacora;
+      });
+      fixed.value = false;
+    }
+  } catch (error) {
+    console.error('Error al listar bitácoras por fechas:', error);
+    $q.notify({
+      type: 'negative',
+      message: 'Error al listar bitácoras por fechas.'
     });
-  });
+  }
 }
 
-function listarBitacorasFicha() {
-  useBitacora.listarBitacorasFicha(selectedFicha.value).then(res => {
-    rows.value = res.map(bitacora => {
-      const fecha = new Date(bitacora.fecha);
-      const dia = String(fecha.getDate()).padStart(2, '0');
-      const mes = String(fecha.getMonth() + 1).padStart(2, '0');
-      const año = fecha.getFullYear();
-      bitacora.fecha = `${dia}/${mes}/${año}`;
-      return bitacora;
+async function listarFecha() {
+  try {
+    const res = await useBitacora.listarBitacorasFechaUnica(fecha.value);
+    
+    if (!res?.response?.data?.errors) {
+      rows.value = res.map(bitacora => {
+        const fecha = new Date(bitacora.fecha);
+        const dia = String(fecha.getDate()).padStart(2, '0');
+        const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+        const año = fecha.getFullYear();
+        bitacora.fecha = `${dia}/${mes}/${año}`;
+        return bitacora;
+      });
+      fixed.value = false;
+    }
+  } catch (error) {
+    console.error('Error al listar bitácoras por fecha:', error);
+    $q.notify({
+      type: 'negative',
+      message: 'Error al listar bitácoras por fecha.'
     });
-  });
+  }
 }
 
-function listarBitacorasAprendiz() {
-  useBitacora.listarBitacorasAprendiz(selectedAprendiz.value).then(res => {
-    rows.value = res.map(bitacora => {
-      const fecha = new Date(bitacora.fecha);
-      const dia = String(fecha.getDate()).padStart(2, '0');
-      const mes = String(fecha.getMonth() + 1).padStart(2, '0');
-      const año = fecha.getFullYear();
-      bitacora.fecha = `${dia}/${mes}/${año}`;
-      return bitacora;
+async function listarBitacorasFicha() {
+  try {
+    const res = await useBitacora.listarBitacorasFicha(IdFicha.value.value);
+  
+    if (!res?.response?.data?.errors) {
+      rows.value = res.map(bitacora => {
+        const fecha = new Date(bitacora.fecha);
+        const dia = String(fecha.getDate()).padStart(2, '0');
+        const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+        const año = fecha.getFullYear();
+        bitacora.fecha = `${dia}/${mes}/${año}`;
+        return bitacora;
+      });
+      fixed.value = false;
+    }
+  } catch (error) {
+    console.error('Error al listar bitácoras por ficha:', error);
+    $q.notify({
+      type: 'negative',
+      message: 'Error al listar bitácoras por ficha.'
     });
-  });
+  }
 }
 
-function listarFecha() {
-  useBitacora.listarBitacorasPorFecha(fecha.value).then(res => {
-    rows.value = res.map(bitacora => {
-      const fecha = new Date(bitacora.fecha);
-      const dia = String(fecha.getDate()).padStart(2, '0');
-      const mes = String(fecha.getMonth() + 1).padStart(2, '0');
-      const año = fecha.getFullYear();
-      bitacora.fecha = `${dia}/${mes}/${año}`;
-      return bitacora;
+async function listarBitacorasAprendiz() {
+  try {
+    console.log(idAprendis.value);
+    
+    const res = await useBitacora.listarBitacorasAprendiz(idAprendis.value.value);
+
+    
+    if (!res?.response?.data?.errors) {
+      rows.value = res.map(bitacora => {
+        const fecha = new Date(bitacora.fecha);
+        const dia = String(fecha.getDate()).padStart(2, '0');
+        const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+        const año = fecha.getFullYear();
+        bitacora.fecha = `${dia}/${mes}/${año}`;
+        return bitacora;
+      });
+      fixed.value = false;
+    }
+  } catch (error) {
+    console.error('Error al listar bitácoras por aprendiz:', error);
+    $q.notify({
+      type: 'negative',
+      message: 'Error al listar bitácoras por aprendiz.'
     });
-  });
+  }
 }
 
-function crearBitacora() {
-  const bitacoraData = {
-    nom: nom.value,
-    cc: cc.value,
-    IdFicha: IdFicha.value,
-    email: email.value,
-    telefono: telefono.value
-  };
-
-  useBitacora.crearBitacora(bitacoraData).then(() => {
-    fixed.value = false;
-    traer();
-  });
+async function crearBitacora() {
+  try {
+    const res = await useBitacora.crearBitacora({
+      fecha: new Date().toISOString(),
+      nombre: nom.value,
+      cc: cc.value,
+      ficha: IdFicha.value,
+      email: email.value,
+      telefono: telefono.value,
+      estado: 'pendiente'
+    });
+    
+    if (!res?.response?.data?.errors) {
+      $q.notify({
+        type: 'positive',
+        message: 'Bitácora creada correctamente.'
+      });
+      fixed.value = false;
+      traer();
+    }
+  } catch (error) {
+    console.error('Error al crear la bitácora:', error);
+    $q.notify({
+      type: 'negative',
+      message: 'Error al crear la bitácora.'
+    });
+  }
 }
 
-function eliminarAprendiz() {
-  useBitacora.eliminarAprendiz(idAprendis.value).then(() => {
-    traer();
-  });
+function cambiarEstado(id, nuevoEstado) {
+  useBitacora.actulizarEstado(id, nuevoEstado)
+    .then(() => {
+      $q.notify({
+        type: 'positive',
+        message: 'Estado actualizado correctamente.'
+      });
+      traer();
+    })
+    .catch(error => {
+      console.error('Error al cambiar estado:', error);
+      $q.notify({
+        type: 'negative',
+        message: 'Error al cambiar estado.'
+      });
+    });
 }
+const columns = ref([
+  { name: 'fecha', label: 'Fecha', field: 'fecha', align: 'center', sortable: true },
+  { name: 'IdAprendiz', align: 'center', label: 'Nombre Aprendiz', field: row => row?.IdAprendis?.nombre, sortable: true },
+  { name: 'IdAprendiz', align: 'center', label: 'Teléfono Aprendiz', field: row => row?.IdAprendis?.telefono, sortable: true },
+  { name: 'IdAprendiz', align: 'center', label: 'Email Aprendiz', field: row => row?.IdAprendis?.email, sortable: true },
+  { name: 'IdAprendiz', align: 'center', label: 'Cc', field: row => row?.IdAprendis?.cc, sortable: true },
+  { name: 'nombreFicha', align: 'center', label: 'Nombre Ficha', field: row => row?.IdAprendis?.IdFicha?.nombre, sortable: true },
+  { name: 'codigoFicha', align: 'center', label: 'Código Ficha', field: row => row?.IdAprendis?.IdFicha?.codigo, sortable: true },
+  { name: 'estado', align: 'center', label: 'Estado', field: 'estado', sortable: true },
+]);
+
 
 function Salir() {
-  router.push('/home');
+  router.push({ name: 'menu' });
 }
 
 function cerrar() {
   fixed.value = false;
 }
 
-const columns = [
-  { name: 'id', required: true, label: 'ID', align: 'left', field: row => row._id },
-  { name: 'nombre', label: 'Nombre', align: 'left', field: row => row.nom },
-  { name: 'cc', label: 'CC', align: 'left', field: row => row.cc },
-  { name: 'id_ficha', label: 'ID Ficha', align: 'left', field: row => row.IdFicha },
-  { name: 'email', label: 'Email', align: 'left', field: row => row.email },
-  { name: 'telefono', label: 'Teléfono', align: 'left', field: row => row.telefono },
-  { name: 'estado', label: 'Estado', align: 'left', field: row => row.estado }
-];
 </script>
+
 
 <style scoped>
 .container {
