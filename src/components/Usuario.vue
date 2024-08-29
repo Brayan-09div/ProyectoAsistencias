@@ -160,11 +160,10 @@ async function activar(id) {
 }
 
 async function crearUsuario() {
-  // Reset errors
+
   nomError.value = !nom.value;
   emailError.value = !email.value || !email.value.includes('@');
 
-  // If errors exist, do not proceed
   if (nomError.value || emailError.value) {
     return;
   }

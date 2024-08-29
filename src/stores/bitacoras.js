@@ -6,6 +6,32 @@ import { useUsuariosStore } from "../stores/usuarios.js";
 export const useBitacoraStore = defineStore("bitacora", () => {
   const useUsuarios = useUsuariosStore();
 
+  const crearBitacora = async (cc) => {
+    try {
+      const r = await axios.post(
+        "/Bitacoras/",
+        { cc },
+        {
+          headers: {
+            "x-token": useUsuarios.xtoken,
+          },
+        }
+      );
+      Notify.create({
+        type: "positive",
+        message: "Bitácora creada correctamente",
+      });
+      return r.data;
+    } catch (error) {
+      console.log(error);
+      Notify.create({
+        type: "negative",
+        message: "Hubo un error al crear la bitácora",
+      });
+      return error;
+    }
+  };
+
   // Listar todas las bitácoras
   const listarBitacoras = async () => {
     try {
@@ -109,6 +135,7 @@ export const useBitacoraStore = defineStore("bitacora", () => {
 
 
   return {
+    crearBitacora,
     listarBitacoras,
     actulizarEstado,
     listarBitacorasFecha,
