@@ -19,8 +19,8 @@ const routes = [
         { path: '/bitacoras', component: bitacoras },
         { path: '/perfil', component: perfil },
     ] },
-    {path: '/',  component: inscripcion},
-    {path: '/loguin',  component: loguin}
+    {path: '/isncripcion',  component: inscripcion},
+    {path: '/',  component: loguin}
 ]
 
 export const router = createRouter({

@@ -1,25 +1,37 @@
 <template>
-    <div class="form-container">
-      <button @click="Salir()">Loguin</button>
-      <form>
-        <label for="cc">Número de Identificación:</label>
-        <input type="text" id="cc" v-model="ccNumber">
-        <button type="submit">Aceptar</button>
-      </form>
-    </div>
-  </template>
+  <div class="form-container">
+    <form @submit.prevent="crearBitacora">
+      <label for="cc">Número de Identificación:</label>
+      <input type="text" id="cc" v-model="cc" required>
+      <button type="submit">Aceptar</button>
+    </form>
+  </div>
+</template>
   
-  <script setup>
-  import { useRouter } from 'vue-router';
-  import { ref } from 'vue';
-  
-  let ccNumber = ref("");
-  const router = useRouter();
-  
-  const Salir = async () => {
-    router.replace("/loguin");
-  };
-  </script>
+<script setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useBitacoraStore } from '../stores/bitacoras.js'; 
+
+const useBitacora = useBitacoraStore();
+const cc = ref('');
+const router = useRouter();
+
+const crearBitacora = async () => {
+  if (cc.value) {
+    try {
+      await useBitacora.crearBitacora(cc.value);
+      cc.value = '';
+    } catch (error) {
+      console.error('Error al crear la bitácora:', error);
+     
+    }
+  } else {
+    console.error("El campo CC es obligatorio");
+  }
+};
+</script>
+
 
 <style scoped>
 .form-container {

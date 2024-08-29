@@ -8,7 +8,7 @@ import { useUsuariosStore } from "../stores/usuarios.js"
 
 export const useAprendizStore = defineStore("Aprendiz", () => {
     const useUsuarios = useUsuariosStore()
-
+    
     const store = ref("store");
     const listarAprendiz = async () => {
         try {

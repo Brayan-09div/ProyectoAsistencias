@@ -1,12 +1,38 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
 import axios from "axios";
 import { Notify } from "quasar";
-import { useUsuariosStore } from "../stores/usuarios.js"
+import { useUsuariosStore } from "../stores/usuarios.js";
 
 export const useBitacoraStore = defineStore("bitacora", () => {
-  const useUsuarios = useUsuariosStore()
+  const useUsuarios = useUsuariosStore();
 
+  const crearBitacora = async (cc) => {
+    try {
+      const r = await axios.post(
+        "/Bitacoras/",
+        { cc },
+        {
+          headers: {
+            "x-token": useUsuarios.xtoken,
+          },
+        }
+      );
+      Notify.create({
+        type: "positive",
+        message: "Bitácora creada correctamente",
+      });
+      return r.data;
+    } catch (error) {
+      console.log(error);
+      Notify.create({
+        type: "negative",
+        message: "Hubo un error al crear la bitácora",
+      });
+      return error;
+    }
+  };
+
+  // Listar todas las bitácoras
   const listarBitacoras = async () => {
     try {
       let r = await axios.get("/Bitacoras/listar", {
@@ -15,125 +41,106 @@ export const useBitacoraStore = defineStore("bitacora", () => {
         },
       });
       console.log(r);
-      return r;
+      return r.data;
     } catch (error) {
       console.log(error);
       return error;
     }
   };
-
-  const activarDesactivarFichas = async (id) => {
-    console.log(id);
+  const listarBitacorasFechaUnica = async (fecha) => {
     try {
-      let r = await axios.put(
-        `/Fichas/activarDesactivar/${id}`, {}, 
-        {
-          headers: {
-            "x-token": useUsuarios.xtoken, 
-          },
-        }
-      );
-      console.log(r);
-      return r;
-    } catch (error) {
-      console.log(error);
-      return error;
-    }
-  };
-
-  const guardarFicha = async (cod, nom) => {
-    try {
-      let r = await axios.post(
-        "/Fichas",
-        {
-          codigo: cod,
-          nombre: nom,
-        },
-        {
-          headers: {
-            "x-token": useUsuarios.xtoken,
-          },
-        }
-      );
-      console.log(r);
-      Notify.create({
-        color: "positive",
-        message: "Registro exitoso",
-        icon: "check_circle",
-        timeout: 2500,
-      });
-      return r;
-    } catch (error) {
-      console.log(error);
-      Notify.create({
-        color: "negative",
-        message: error.response.data.errors[0].msg,
-        icon: "error",
-        timeout: 2500,
-      });
-      return error;
-    }
-  };
-
-  const editarFicha = async (id, cod, nom) => {
-    console.log(id);
-    try {
-      let r = await axios.put(
-        `/Fichas/editar/${id}`,
-        { codigo: cod, nombre: nom }, {
-          headers: {
-            "x-token": useUsuarios.xtoken,
-          },
-        }
-      );
-      console.log(r);
-      Notify.create({
-        color: "positive",
-        message: "Edición exitosa",
-        icon: "error",
-        timeout: 2500,
-      });
-      return r;
-    } catch (error) {
-      console.log(error);
-      Notify.create({
-        color: "negative",
-        message: error.response.data.errors[0].msg,
-        icon: "error",
-        timeout: 2500,
-      });
-      return error;
-    }
-  }
-
-  const eliminar = async (id) => {
-    try {
-      let r = await axios.delete(`/Fichas/eliminar/${id}`, {
+      let r = await axios.get(`/Bitacoras/ListarFecha/${fecha}`, {
         headers: {
           "x-token": useUsuarios.xtoken,
         },
       });
       console.log(r);
-      Notify.create({
-        color: "positive",
-        message: "Eliminación exitosa",
-        icon: "error",
-        timeout: 2500,
+      return r.data;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  };
+
+  const listarBitacorasFecha = async (fechaInicio,fechaFin) => {
+    try {
+      let r = await axios.get(`/Bitacoras/ListarFechas/${fechaInicio}/${fechaFin}`, {
+        headers: {
+          "x-token": useUsuarios.xtoken,
+        },
       });
-      return r;
+      console.log(r);
+      return r.data;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  };
+
+  const listarBitacorasFicha = async (IdFicha)=>{
+    try {
+      let r = await axios.get(`/Bitacoras/ListarFicha/${IdFicha}`, {
+        headers: {
+          "x-token": useUsuarios.xtoken,
+        },
+      });
+      console.log(r);
+      return r.data;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  };
+
+  const listarBitacorasAprendiz = async (idAprendis) => {
+    try {
+      let r = await axios.get(`/Bitacoras/ListarAprendis/${idAprendis}`, {
+        headers: {
+          "x-token": useUsuarios.xtoken,
+        },
+      });
+      console.log(r);
+      return r.data;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  };
+
+  const actulizarEstado = async (id, estado) => {
+    try {
+      let r = await axios.put(
+        `/Bitacoras/ActualizarEstado/${id}`,
+        { estado },
+        {
+          headers: {
+            "x-token": useUsuarios.xtoken,
+          },
+        }
+      );
+      console.log(r);
+      Notify.create({
+        type: "positive",
+        message: "Bitácora actualizada correctamente",
+      });
+      return r.data;
     } catch (error) {
       console.log(error);
       Notify.create({
-        color: "negative",
-        message: error.response.data.errors[0].msg,
-        icon: "error",
-        timeout: 2500,
+        type: "negative",
+        message: "Hubo un error al actualizar la bitácora",
       });
-      return error;
     }
-  }
+  };
+
 
   return {
+    crearBitacora,
     listarBitacoras,
+    actulizarEstado,
+    listarBitacorasFecha,
+    listarBitacorasFicha,
+    listarBitacorasAprendiz,
+    listarBitacorasFechaUnica,
   };
-}, { persist: true });
+});
