@@ -18,6 +18,19 @@
           </q-toolbar>
         </q-header>
 
+<<<<<<< HEAD
+        <q-drawer v-model="leftDrawerOpen" :width="250" side="left" overlay behavior="mobile" class="bg-white" elevated>
+          <router-link to="/perfil" class="text-weight-bold">
+            <q-img class="absolute-top" src="https://cdn.quasar.dev/img/material.png" style="height: 150px">
+              <div class="absolute-bottom bg-transparent">
+                <q-avatar size="60px" class="q-mb-sm">
+                  <img src="https://cdn.quasar.dev/img/boy-avatar.png">
+                </q-avatar>
+                <div>Nombre</div>
+              </div>
+            </q-img>
+          </router-link>
+=======
       <q-drawer v-model="leftDrawerOpen" :width="250" side="left" overlay behavior="mobile" class="bg-black" dark
         elevated>
         <router-link to="/perfil" class="text-weight-bold">
@@ -31,60 +44,40 @@
             </div>
           </q-img>
         </router-link>
+>>>>>>> afaf9b5eb317962abdccf609fa94c2038e5ff146
 
           <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd">
             <q-list padding>
               <!-- Lista de opciones -->
-              <q-item clickable to="/usuario" v-ripple>
-                <q-item-section avatar>
-                  <q-icon name="person" />
-                </q-item-section>
+              <q-item clickable to="/usuario" v-ripple class="menu-button">
                 <q-item-section>
-                USUARIOS
-              </q-item-section>
-            </q-item>
+                  USUARIOS
+                </q-item-section>
+              </q-item>
 
+              <q-item clickable to="/aprendiz" v-ripple class="menu-button">
+                <q-item-section>
+                  APRENDICES
+                </q-item-section>
+              </q-item>
 
-            <q-item clickable to="/aprendiz" v-ripple>
-              <q-item-section avatar>
-                <q-icon name="person" />
-              </q-item-section>
+              <q-item clickable to="/bitacoras" v-ripple class="menu-button">
+                <q-item-section>
+                  BITACORAS
+                </q-item-section>
+              </q-item>
 
-              <q-item-section>
-                Aprendiz
-              </q-item-section>
-            </q-item>
+              <q-item clickable to="/fichas" v-ripple class="menu-button">
+                <q-item-section>
+                  FICHAS
+                </q-item-section>
+              </q-item>
 
-
-            <q-item clickable to="/bitacoras" v-ripple>
-              <q-item-section avatar>
-                <q-icon name="person" />
-              </q-item-section>
-
-              <q-item-section>
-                Bitacoras
-              </q-item-section>
-            </q-item>
-
-            <q-item clickable to="/fichas" v-ripple>
-              <q-item-section avatar>
-                <q-icon name="document" />
-              </q-item-section>
-
-              <q-item-section>
-                Fichas
-              </q-item-section>
-            </q-item>
-
-            <q-item clickable to="/isncripcion" v-ripple>
-              <q-item-section avatar>
-                <q-icon name="document" />
-              </q-item-section>
-
-              <q-item-section>
-                Isncripcion
-              </q-item-section>
-            </q-item>
+              <q-item clickable to="/isncripcion" v-ripple class="menu-button">
+                <q-item-section>
+                  INSCRIPCION
+                </q-item-section>
+              </q-item>
             </q-list>
           </q-scroll-area>
         </q-drawer>
@@ -222,7 +215,34 @@ hr {
   margin-bottom: 0px;
 }
 
-.cards{
+.menu-button {
+  background-color: #2F7D32;
+  color: white !important;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: bold;
+  width: 95%;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  margin-left: 2%;
+
+}
+
+.menu-button:hover {
+  background-color: #276527;
+}
+
+.menu-button q-item-section {
+  text-align: center;
+  width: 100%;
+  justify-content: center;
+}
+
+.cards {
   width: 70%;
   margin: 0 auto;
   margin-bottom: 50px;
@@ -235,33 +255,24 @@ hr {
   align-items: center;
 }
 
-#Ver{
-  margin: 0 auto;
-  margin-bottom: 0px;
-  margin-top: 0px;
+#Ver, #REGISTRO {
   background-color: #2F7D32 !important;
   font-size: 15px;
   font-weight: bold;
+}
+
+#REGISTRO {
+  width: 35%;
+}
+
+#Ver {
   width: 55%;
 }
 
-#REGISTRO{
-  margin: 0 auto;
+.inscripciones {
+  text-align: center;
+  justify-content: center;
+  align-items: center;
   margin-bottom: 100px;
-  margin-top: 0px;
-  background-color: #2F7D32 !important;
-  font-size: 15px;
-  font-weight: bold;
-  width: 35%;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
 }
-
-.inscripciones{
-  text-align: center;
-  justify-content: center;
-  align-items: center;
-}
-
 </style>

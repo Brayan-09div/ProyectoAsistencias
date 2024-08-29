@@ -1,22 +1,37 @@
 <template>
   <div>
     <div id="en">
-      <button id="atras" @click="Salir()"><span class="material-symbols-outlined">arrow_back</span></button>
+      <button id="atras" @click="Salir()">
+        <span class="material-symbols-outlined">arrow_back</span>
+      </button>
       <h1 id="programas">Programas</h1>
     </div>
     <hr>
     <div style="margin: 0px;">
       <div class="tablafichas">
         <div style="margin-top: 0px;">
-          <q-btn id="agregarficha" @click="fixed = true" color="primary">
-            <span class="material-symbols-outlined">add_circle</span>Crear
+          <q-btn
+            id="agregarficha"
+            @click="fixed = true"
+            color="primary"
+            :loading="loadingAgregar"
+          >
+            <q-spinner v-if="loadingAgregar" color="white" size="20px" />
+            <span v-else class="material-symbols-outlined">add_circle</span>Crear
           </q-btn>
         </div>
         <q-table :rows="rows" :columns="columns" row-key="codigo">
           <template class="tabla" v-slot:body-cell-opciones="props">
             <q-td :props="props">
-              <q-btn id="edit" @click="traerDatos(props.row)" color="primary"><span
-                  class="material-symbols-outlined">edit</span></q-btn>
+              <q-btn
+                id="edit"
+                @click="traerDatos(props.row)"
+                color="primary"
+                :loading="loadingEdit"
+              >
+                <q-spinner v-if="loadingEdit" color="white" size="20px" />
+                <span v-else class="material-symbols-outlined">edit</span>
+              </q-btn>
             </q-td>
           </template>
           <template v-slot:header-cell="props">
@@ -26,70 +41,60 @@
           </template>
           <template v-slot:body-cell-estado="props">
             <q-td :props="props">
-              <q-btn @click="activar(props.row._id)" :color="props.row.estado == 1 ? 'green' : 'red'">
+              <q-btn
+                @click="activar(props.row._id, props.row)"
+                :color="props.row.estado == 1 ? 'green' : 'red'"
+                :loading="loadingStates[props.row._id]"
+              >
+                <q-spinner v-if="loadingStates[props.row._id]" color="white" size="20px" />
                 {{ props.row.estado == 1 ? 'Activo' : 'Inactivo' }}
               </q-btn>
             </q-td>
           </template>
         </q-table>
-        <q-dialog v-model="fixed" :backdrop-filter="'blur(4px) saturate(150%)'" transition-show="rotate"
-          transition-hide="rotate" persistent>
-          <q-card>
-            <q-card-section>
-              <div class="text-h6">{{ b == true ? "Editar Ficha" : "Guardar Ficha" }}</div>
+        <!-- Modal principal -->
+        <q-dialog v-model="fixed" :backdrop-filter="'blur(4px) saturate(150%)'" transition-show="rotate" transition-hide="rotate" persistent>
+          <q-card class="modal-card">
+            <q-card-section class="modal-header">
+              <div class="text-h6">{{ b ? "Editar Ficha" : "Guardar Ficha" }}</div>
             </q-card-section>
 
             <q-separator />
 
-            <q-card-section style="max-height: 50vh" class="scroll">
-              <q-input filled v-model="num" label="Nombre De La Ficha" :dense="dense" />
-              <q-input filled v-model="cod" label="Codigo De La Ficha" :dense="dense" />
-
+            <q-card-section style="max-height: 50vh" class="scroll modal-body">
+              <q-input filled v-model="num" label="Nombre De La Ficha" :dense="dense" :error="numError" error-message="El nombre de la ficha es requerido" />
+              <q-input filled v-model="cod" label="Codigo De La Ficha" :dense="dense" :error="codError" error-message="El código de la ficha es requerido" />
             </q-card-section>
 
-            <q-separator />
-
-            <q-card-actions align="right">
-              <q-btn flat label="Cerar" color="primary" v-close-popup @click="cerar()" />
-              <q-btn flat label="Guardar" color="primary" @click="crearFicha()" />
+            <q-card-actions align="center" class="modal-footer">
+              <q-btn
+                id="btncerrar"
+                flat
+                label="Cerrar"
+                color="primary"
+                v-close-popup
+                @click="cerar()"
+              />
+              <q-btn
+                id="btnguardar"
+                flat
+                label="Guardar"
+                color="primary"
+                @click="crearFicha()"
+                :loading="loadingGuardar"
+              >
+                <q-spinner v-if="loadingGuardar" color="white" size="20px" />
+              </q-btn>
             </q-card-actions>
           </q-card>
         </q-dialog>
-
-
       </div>
-
     </div>
-    <q-dialog v-model="fixed" :backdrop-filter="'blur(4px) saturate(150%)'" transition-show="rotate"
-      transition-hide="rotate" persistent>
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">{{ b == true ? "Editar Ficha" : "Guardar Ficha" }}</div>
-        </q-card-section>
-
-        <q-separator />
-
-        <q-card-section style="max-height: 50vh" class="scroll">
-          <q-input filled v-model="num" label="Nombre De La Ficha" :dense="dense" :error="numError"
-            error-message="El nombre de la ficha es requerido" />
-          <q-input filled v-model="cod" label="Codigo De La Ficha" :dense="dense" :error="codError"
-            error-message="El código de la ficha es requerido" />
-        </q-card-section>
-
-        <q-separator />
-
-        <q-card-actions align="right">
-          <q-btn flat label="Cerrar" color="primary" v-close-popup @click="cerar()" />
-          <q-btn flat label="Guardar" color="primary" @click="crearFicha()" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-
   </div>
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router';
 import { ref, onBeforeMount, watch } from 'vue';
 import { Dark } from 'quasar';
 import { useQuasar } from 'quasar';
@@ -97,8 +102,7 @@ import { useFichaStore } from '../stores/fichas.js';
 
 const useFicha = useFichaStore();
 const $q = useQuasar();
-const router = useRouter()
-let confirm = ref(false);
+const router = useRouter();
 let fixed = ref(false);
 let num = ref("");
 let cod = ref("");
@@ -113,17 +117,15 @@ watch(isDark, (val) => {
   Dark.set(val);
 });
 
-
 const rows = ref([]);
+const loadingAgregar = ref(false);
+const loadingEdit = ref(false);
+const loadingGuardar = ref(false);
+const loadingStates = ref({});
 
 onBeforeMount(() => {
   traer();
 });
-
-function ides(ids) {
-  id.value = ids;
-  confirm.value = true;
-}
 
 async function traer() {
   let res = await useFicha.listarFichas();
@@ -136,7 +138,7 @@ function traerDatos(datos) {
   b.value = true;
   num.value = datos.nombre;
   cod.value = datos.codigo;
-  numError.value = false; // Reset error states
+  numError.value = false;
   codError.value = false;
 }
 
@@ -144,13 +146,15 @@ function cerar() {
   b.value = false;
   num.value = "";
   cod.value = "";
-  numError.value = false; // Reset error states
+  numError.value = false;
   codError.value = false;
 }
 
-async function activar(id) {
+async function activar(id, row) {
+  loadingStates.value[id] = true;
   let res = await useFicha.activarDesactivarFichas(id);
   await traer();
+  loadingStates.value[id] = false;
 }
 
 async function crearFicha() {
@@ -160,6 +164,8 @@ async function crearFicha() {
   if (numError.value || codError.value) {
     return;
   }
+
+  loadingGuardar.value = true;
 
   if (b.value) {
     const res = await editarFicha(id.value);
@@ -179,6 +185,8 @@ async function crearFicha() {
       fixed.value = false;
     }
   }
+
+  loadingGuardar.value = false;
 }
 
 async function editarFicha() {
@@ -189,11 +197,12 @@ async function editarFicha() {
     return;
   }
 
+  loadingGuardar.value = true;
   let res = await useFicha.editarFicha(id.value, cod.value, num.value);
   await traer();
+  loadingGuardar.value = false;
   return res;
 }
-
 
 const columns = ref([
   { name: 'codigo', label: 'CÓDIGO', field: 'codigo', align: 'center', sortable: true },
@@ -205,10 +214,7 @@ const columns = ref([
 const Salir = async () => {
   router.replace("/home")
 }
-
 </script>
-
-
 
 <style scoped>
 #en {
@@ -240,9 +246,9 @@ const Salir = async () => {
   border: none;
   background-color: rgb(8, 73, 55);
   color: white;
-  margin-left: 25px;
+  margin-left: 3%;
   margin-bottom: 0px;
-  margin-top: 20px;
+  margin-top: 4%;
 }
 
 hr {
@@ -250,13 +256,13 @@ hr {
   border: 2px solid #2F7D32;
   margin: 0 auto;
   margin-top: -20px;
-  margin-bottom: 0px
+  margin-bottom: 0px;
 }
 
 .tablafichas {
   width: 80%;
   margin: 0 auto;
-  margin-bottom: 60px
+  margin-bottom: 60px;
 }
 
 #agregarficha {
@@ -273,12 +279,46 @@ hr {
   margin-right: 5px;
 }
 
-#delete {
-  background-color: red;
-  border-radius: 70%;
-  margin: 5px;
-  width: 37px;
+.modal-card {
+  max-width: 400px;
+  width: 100%;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  background-color: #f8f9fa;
+}
+
+.modal-header {
+  background-color: #2F7D32;
   color: white;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  padding: 16px;
+  font-weight: bold !important;
+  font-size: 18px;
+  text-align: center;
+}
+
+.modal-body {
+  padding: 35px;
+}
+
+.modal-footer {
+  padding: 16px;
+  background-color: #f1f1f1;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+}
+
+#btnguardar {
+  background-color: #2F7D32 !important;
+  font-size: 13px;
+  font-weight: bold;
+  color: white !important;
+}
+
+#btncerrar {
+  color: black !important;
+  border: 1px black;
 }
 
 #edit {

@@ -95,9 +95,6 @@
   let id = ref("");
   let fichas = ref([]);
   let options = ref(fichas.value);
-
-
-  
   let ccOriginal = ref("");
   let emailOriginal = ref("");
 
@@ -106,15 +103,13 @@
   const ccError = ref(false);
   const emailError = ref(false);
   const telefonoError = ref(false);
-
-  const rows = ref([]);
   
   const isDark = ref(Dark.isActive);
   watch(isDark, (val) => {
       Dark.set(val);
   });
   
-
+  const rows = ref([]);
   
   onBeforeMount(() => {
       traer();
@@ -193,7 +188,7 @@
               fixed.value = false;
           }
       } else {
-          let res = await useAprendiz.guardarAprendis(cc.value, nom.value, email.value, telefono.value, IdFicha.value.value);
+          let res = await useAprendiz.guardarAprendiz(cc.value, nom.value, email.value, telefono.value, IdFicha.value.value);
           if (res?.response?.data?.errors) {
               fixed.value = true;
           } else {
@@ -241,20 +236,23 @@
   const Salir = async () => {
   router.replace("/home")
 }
-  </script>
-  
-  <style scoped>
-  #agregar-aprendiz {
-    background-color: #2F7D32 !important;
-    font-size: 13px;
-    font-weight: bold;
-  }
-  #agregar-aprendiz .material-symbols-outlined {
-    font-size: 19px;
-    margin-right: 5px;
-  }
+</script>
 
-  #en {
+<style scoped>
+#agregar-aprendiz {
+  background-color: #2F7D32 !important;
+  font-size: 13px;
+  font-weight: bold;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+#agregar-aprendiz .material-symbols-outlined {
+  font-size: 19px;
+  margin-right: 5px;
+}
+
+#en {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -267,15 +265,13 @@
   font-weight: bold;
   text-align: center;
   flex-grow: 1;
-  padding-top: 0px;
-  margin-top: 0px;
   padding-top: 40px;
   margin-bottom: 0px;
 }
 
 #atras {
-  width: 35px;
-  height: 35px;
+  width: 40px; /* Aumenté el tamaño para mejorar la clicabilidad */
+  height: 40px; /* Aumenté el tamaño para mejorar la clicabilidad */
   border-radius: 50%;
   display: flex;
   justify-content: center;
@@ -283,9 +279,13 @@
   border: none;
   background-color: rgb(8, 73, 55);
   color: white;
-  margin-left: 25px;
-  margin-bottom: 0px;
-  margin-top: 20px;
+  margin-left: 3%;
+  margin-top: 2%;
+  cursor: pointer; /* Asegura que se vea como un botón clickeable */
+}
+
+#atras:focus {
+  outline: none; /* Elimina el borde de enfoque */
 }
 
 hr {
@@ -293,35 +293,58 @@ hr {
   border: 2px solid #2F7D32;
   margin: 0 auto;
   margin-top: -20px;
-  margin-bottom: 0px
+  margin-bottom: 0px;
 }
 
 .tablafichas {
   width: 95%;
   margin: 0 auto;
-  margin-bottom: 60px
+  margin-bottom: 60px;
 }
 
-#agregar-aprendiz {
-  margin: 0 auto;
-  margin-bottom: 20px;
-  margin-top: 30px;
+.modal-card {
+  max-width: 400px;
+  width: 100%;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  background-color: #f8f9fa;
+}
+
+.modal-header {
+  background-color: #2F7D32;
+  color: white;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  padding: 16px;
+  font-weight: bold !important;
+  font-size: 18px;
+  text-align: center;
+}
+
+.modal-body {
+  padding: 35px;
+}
+
+.modal-footer {
+  padding: 16px;
+  background-color: #f1f1f1;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+}
+
+/* Estilos personalizados para los botones */
+.btn-guardar {
   background-color: #2F7D32 !important;
+  color: white !important;
   font-size: 13px;
   font-weight: bold;
 }
 
-#agregar-aprendiz .material-symbols-outlined {
-  font-size: 19px;
-  margin-right: 5px;
-}
-
-#delete {
-  background-color: red;
-  border-radius: 70%;
-  margin: 5px;
-  width: 37px;
-  color: white;
+.btn-cerrar {
+  color: black !important;
+  border: 1px solid black !important;
+  font-size: 13px;
+  font-weight: bold;
 }
 
 #edit {
@@ -331,5 +354,4 @@ hr {
   width: 37px;
   color: white;
 }
-  </style>
-  
+</style>

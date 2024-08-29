@@ -1,88 +1,111 @@
 <template>
-  <div>
-    <div id="en">
+  <div class="container">
+    <div id="en" class="header">
       <button id="atras" @click="Salir">
         <span class="material-symbols-outlined">arrow_back</span>
       </button>
       <h1 id="programas">Bitacoras</h1>
       <q-input v-model="fechaInicio" filled type="date" hint="Native date" />
       <q-input v-model="fechaFin" filled type="date" hint="Native date" />
-      <button @click="listarFechas()">listar Fechas</button>
+      <button @click="listarFechas()">Listar Fechas</button>
     </div>
     <div>
-      <q-select rounded outlined v-model="IdFicha" use-input hide-selected fill-input input-debounce="0"
-                :options="options" @filter="filterFichas" label="Selecciona una ficha">
-                <template v-slot:no-option>
-                  <q-item>
-                    <q-item-section class="text-grey">
-                      Sin resultados
-                    </q-item-section>
-                  </q-item>
-                </template>
-              </q-select>
-      <button @click="listarBitacorasFicha()">listar Ficha</button>
+      <q-select
+        rounded
+        outlined
+        v-model="selectedFicha"
+        use-input
+        hide-selected
+        fill-input
+        input-debounce="0"
+        :options="fichaOptions"
+        @filter="filterFichas"
+        label="Selecciona una ficha"
+      >
+        <template v-slot:no-option>
+          <q-item>
+            <q-item-section class="text-grey">
+              Sin resultados
+            </q-item-section>
+          </q-item>
+        </template>
+      </q-select>
+      <button @click="listarBitacorasFicha()">Listar por Ficha</button>
+    </div>
+    
+    <div>
+      <q-select
+        rounded
+        outlined
+        v-model="selectedAprendiz"
+        use-input
+        hide-selected
+        fill-input
+        input-debounce="0"
+        :options="aprendizOptions"
+        @filter="filterAprendices"
+        label="Selecciona un aprendiz"
+      >
+        <template v-slot:no-option>
+          <q-item>
+            <q-item-section class="text-grey">
+              Sin resultados
+            </q-item-section>
+          </q-item>
+        </template>
+      </q-select>
+      <button @click="listarBitacorasAprendiz()">Listar por Aprendiz</button>
     </div>
 
-    <div>
-      <q-select rounded outlined v-model="idAprendis" use-input hide-selected fill-input input-debounce="0"
-                :options="optionsAprendiz" @filter="filterAprendiz" label="Selecciona un aprendiz">
-                <template v-slot:no-option>
-                  <q-item>
-                    <q-item-section class="text-grey">
-                      Sin resultados
-                    </q-item-section>
-                  </q-item>
-                </template>
-              </q-select>
-      <button @click="listarBitacorasAprendiz()">listar Aprendiz</button>
-    </div>
     <div>
       <q-input v-model="fecha" filled type="date" hint="Native date" />
-      <button @click="listarFecha()">listar Fecha</button>
+      <button @click="listarFecha()">Listar Fechas</button>
     </div>
-    <div style="margin: 0px;">
-      <div class="tablafichas">
-        <q-btn id="agregarficha" @click="fixed = true" color="primary">
-          <span class="material-symbols-outlined">add_circle</span>Crear
-        </q-btn>
-        <q-table :rows="rows" :columns="columns" row-key="_id">
-          <template v-slot:body-cell-estado="props">
-            <q-td :props="props">
-              <q-select
-                v-model="props.row.estado"
-                :options="['pendiente', 'asistió', 'faltó', 'excusa']"
-                @update:model-value="cambiarEstado(props.row._id, props.row.estado)"
-              />
-            </q-td>
-          </template>
-        </q-table>
 
-        <q-dialog
-          v-model="fixed"
-          :backdrop-filter="'blur(4px) saturate(150%)'"
-          transition-show="rotate"
-          transition-hide="rotate"
-          persistent
-        >
-          <q-card>
-            <q-card-section>
-              <div class="text-h6">Crear Bitácora</div>
-            </q-card-section>
-            <q-separator />
-            <q-card-section style="max-height: 50vh" class="scroll">
-              <q-input filled v-model="nom" label="Nombre Del Aprendiz" :dense="dense" />
-              <q-input filled v-model="cc" label="CC" :dense="dense" />
-              <q-input filled v-model="IdFicha" label="Id De La Ficha" :dense="dense" />
-              <q-input filled v-model="email" label="Email del Aprendiz" :dense="dense" />
-              <q-input filled v-model="telefono" label="Teléfono Del Aprendiz" :dense="dense" />
-            </q-card-section>
-            <q-separator />
-            <q-card-actions align="right">
-              <q-btn flat label="Cerrar" color="primary" v-close-popup @click="cerrar" />
-              <q-btn flat label="Guardar" color="primary" @click="crearBitacora" />
-            </q-card-actions>
-          </q-card>
-        </q-dialog>
+    <div class="tablafichas">
+      <q-btn id="agregarficha" @click="fixed = true" color="primary">
+        <span class="material-symbols-outlined">add_circle</span>Crear
+      </q-btn>
+      <q-table :rows="rows" :columns="columns" row-key="_id">
+        <template v-slot:body-cell-estado="props">
+          <q-td :props="props">
+            <q-select
+              v-model="props.row.estado"
+              :options="['pendiente', 'asistió', 'faltó', 'excusa']"
+              @update:model-value="cambiarEstado(props.row._id, props.row.estado)"
+            />
+          </q-td>
+        </template>
+      </q-table>
+    </div>
+
+    <!-- Dialogs -->
+    <q-dialog
+      v-model="fixed"
+      :backdrop-filter="'blur(4px) saturate(150%)'"
+      transition-show="rotate"
+      transition-hide="rotate"
+      persistent
+    >
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Crear Bitácora</div>
+        </q-card-section>
+        <q-separator />
+        <q-card-section style="max-height: 50vh" class="scroll">
+          <q-input filled v-model="nom" label="Nombre Del Aprendiz" :dense="dense" />
+          <q-input filled v-model="cc" label="CC" :dense="dense" />
+          <q-input filled v-model="IdFicha" label="Id De La Ficha" :dense="dense" />
+          <q-input filled v-model="email" label="Email del Aprendiz" :dense="dense" />
+          <q-input filled v-model="telefono" label="Teléfono Del Aprendiz" :dense="dense" />
+        </q-card-section>
+        <q-separator />
+        <q-card-actions align="right">
+          <q-btn flat label="Cerrar" color="primary" v-close-popup @click="cerrar" />
+          <q-btn flat label="Guardar" color="primary" @click="crearBitacora" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
 
         <q-dialog
           v-model="confirm"
@@ -93,7 +116,7 @@
         >
           <q-card>
             <q-card-section class="row items-center">
-              <span class="q-ml-sm">Seguro Quieres Eliminar La Ficha</span>
+              <span class="q-ml-sm">¿Seguro quieres eliminar la ficha?</span>
             </q-card-section>
             <q-card-actions align="right">
               <q-btn flat label="Cancelar" color="primary" v-close-popup />
@@ -102,9 +125,7 @@
           </q-card>
         </q-dialog>
 
-        <q-toggle v-model="isDark" label="Modo Oscuro" />
-      </div>
-    </div>
+    <q-toggle v-model="isDark" label="Modo Oscuro" class="toggle-btn" />
   </div>
 </template>
 
@@ -361,45 +382,69 @@ function cerrar() {
 
 
 <style scoped>
-#en {
+.container {
+  padding: 20px;
+}
+
+.header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 40px;
+  padding-top: 20px;
+  margin-bottom: 20px;
+}
+
+#atras {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  background-color: #2F7D32;
+  color: white;
 }
 
 #programas {
-  font-size: 35px;
+  font-size: 28px;
   font-weight: bold;
   text-align: center;
   flex-grow: 1;
 }
 
-#atras {
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgb(8, 73, 55);
-  color: white;
-  margin-left: 25px;
-  margin-top: 10px;
+.form-section {
+  margin-bottom: 20px;
 }
 
-hr {
-  width: 80%;
-  border: 2px solid #2F7D32;
-  margin: -20px auto 0;
+.primary-btn {
+  background-color: #2F7D32;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.primary-btn:hover {
+  background-color: #1e6e1a;
+}
+
+.q-select,
+.q-input {
+  margin-bottom: 10px;
 }
 
 .tablafichas {
-  width: 80%;
-  margin: 0 auto;
+  width: 100%;
 }
 
 #agregarficha {
-  margin: 30px auto 20px;
+  margin: 20px 0;
+}
+
+.toggle-btn {
+  margin-top: 20px;
 }
 </style>
