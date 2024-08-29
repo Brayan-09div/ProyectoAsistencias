@@ -1,24 +1,33 @@
 <template>
-    <div>
-      <div style="margin: 10px;">
-        <div style="display:flex; justify-content: end;">
-          <q-btn @click="fixed = true" color="primary" id="agregar-aprendiz">
-            Agregar Aprendiz
+      <div id="en">
+      <button id="atras" @click="Salir()"><span class="material-symbols-outlined">arrow_back</span></button>
+      <h1 id="programas">Aprendices</h1>
+    </div>
+    <hr>
+    <div style="margin: 0px;">
+      <div class="tablafichas">
+        <div style="margin-top: 0px;">
+          <q-btn @click="fixed = true" color="primary" id="agregar-aprendiz"><span class="material-symbols-outlined">add_circle</span>
+            Agregar
           </q-btn>
         </div>
-        <q-table title="Aprendiz" :rows="rows" :columns="columns" row-key="name">
-          <template v-slot:body-cell-opciones="props">
+        <q-table :rows="rows" :columns="columns" row-key="codigo">
+          <template class="tabla" v-slot:body-cell-opciones="props">
             <q-td :props="props">
-              <q-btn @click="traerDatos(props.row)" color="primary">📝</q-btn>
-              <q-btn @click="activar(props.row._id)" v-if="props.row.estado == 0">✅</q-btn>
-              <q-btn @click="activar(props.row._id)" v-else>❌</q-btn>
+              <q-btn id="edit" @click="traerDatos(props.row)" color="primary"><span
+                  class="material-symbols-outlined">edit</span></q-btn>
             </q-td>
           </template>
-          <template v-slot:body-cell-estado1="props">
+          <template v-slot:header-cell="props">
+            <q-th :props="props" :style="{ fontWeight: 'bold', color: 'black', fontSize: '16px' }">
+              {{ props.col.label }}
+            </q-th>
+          </template>
+          <template v-slot:body-cell-estado="props">
             <q-td :props="props">
-              <p :style="{ color: props.row.estado == 1 ? 'green' : 'red' }">
+              <q-btn @click="activar(props.row._id)" :color="props.row.estado == 1 ? 'green' : 'red'">
                 {{ props.row.estado == 1 ? 'Activo' : 'Inactivo' }}
-              </p>
+              </q-btn>
             </q-td>
           </template>
         </q-table>
@@ -60,12 +69,7 @@
             </q-card-actions>
           </q-card>
         </q-dialog>
-        <div style="display:flex; justify-content: end;">
-          <q-btn @click="fixed = true" color="primary" id="agregar-aprendiz">
-            Agregar Aprendiz
-          </q-btn>
-        </div>
-        <q-toggle v-model="isDark" label="Modo Oscuro" />
+        <!-- <q-toggle v-model="isDark" label="Modo Oscuro" /> -->
       </div>
     </div>
   </template>
@@ -219,17 +223,19 @@
   }
   
   const columns = ref([
-      { name: 'nombre1', label: 'Nombre del Aprendiz', align: 'center', field: 'nombre', sortable: true },
-      { name: 'codigo1', label: 'Documento Del Aprendiz', align: 'center', field: 'cc', sortable: true },
-      { name: 'email1', label: 'Email Del Aprendiz', align: 'center', field: 'email', sortable: true },
-      { name: 'telefono1', label: 'Telefono Del Aprendiz', align: 'center', field: 'telefono', sortable: true },
-      { name: 'IdFicha1', label: 'Número De Ficha', align: 'center', field: row => row?.IdFicha?.codigo, sortable: true },
-      { name: 'IdFicha2', label: 'Nombre De Ficha', align: 'center', field: row => row?.IdFicha?.nombre, sortable: true },
-      { name: 'estado1', label: 'Estado', align: 'center', field: 'estado', sortable: true },
-      { name: 'opciones', label: 'Opciones', align: 'center' },
+      { name: 'nombre1', label: 'NOMBRE', align: 'center', field: 'nombre', sortable: true, width: '200px'},
+      { name: 'codigo1', label: 'DOCUMENTO', align: 'center', field: 'cc', sortable: true, width: '100px' },
+      { name: 'email1', label: 'EMAIL', align: 'center', field: 'email', sortable: true },
+      { name: 'telefono1', label: 'TELEFONO', align: 'center', field: 'telefono', sortable: true, width: '100px'},
+      { name: 'IdFicha1', label: 'N° DE FICHA', align: 'center', field: row => row?.IdFicha?.codigo, sortable: true, width: '100px' },
+      { name: 'IdFicha2', label: 'NOMBRE DE FICHA', align: 'center', field: row => row?.IdFicha?.nombre, sortable: true },
+      { name: 'estado1', label: 'ESTADO', align: 'center', field: 'estado', sortable: true, width: '100px'},
+      { name: 'opciones', label: 'OPCIONES', align: 'center', width: '80px' },
   ]);
   
-
+  const Salir = async () => {
+  router.replace("/home")
+}
   </script>
   
   <style scoped>
@@ -242,5 +248,83 @@
     font-size: 19px;
     margin-right: 5px;
   }
+
+  #en {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0px;
+  padding-top: 0px;
+}
+
+#programas {
+  font-size: 35px;
+  font-weight: bold;
+  text-align: center;
+  flex-grow: 1;
+  padding-top: 0px;
+  margin-top: 0px;
+  padding-top: 40px;
+  margin-bottom: 0px;
+}
+
+#atras {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  background-color: rgb(8, 73, 55);
+  color: white;
+  margin-left: 25px;
+  margin-bottom: 0px;
+  margin-top: 20px;
+}
+
+hr {
+  width: 95%;
+  border: 2px solid #2F7D32;
+  margin: 0 auto;
+  margin-top: -20px;
+  margin-bottom: 0px
+}
+
+.tablafichas {
+  width: 95%;
+  margin: 0 auto;
+  margin-bottom: 60px
+}
+
+#agregar-aprendiz {
+  margin: 0 auto;
+  margin-bottom: 20px;
+  margin-top: 30px;
+  background-color: #2F7D32 !important;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+#agregar-aprendiz .material-symbols-outlined {
+  font-size: 19px;
+  margin-right: 5px;
+}
+
+#delete {
+  background-color: red;
+  border-radius: 70%;
+  margin: 5px;
+  width: 37px;
+  color: white;
+}
+
+#edit {
+  background-color: rgb(28, 75, 51) !important;
+  border-radius: 70%;
+  margin: 5px;
+  width: 37px;
+  color: white;
+}
   </style>
   
