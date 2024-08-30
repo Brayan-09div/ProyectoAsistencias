@@ -125,7 +125,7 @@
           </q-card>
         </q-dialog>
 
-    <q-toggle v-model="isDark" label="Modo Oscuro" class="toggle-btn" />
+    <!-- <q-toggle v-model="isDark" label="Modo Oscuro" class="toggle-btn" /> -->
   </div>
 </template>
 

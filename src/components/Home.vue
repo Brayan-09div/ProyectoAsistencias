@@ -15,7 +15,7 @@
           </q-toolbar>
         </q-header>
 
-        <q-drawer v-model="leftDrawerOpen" :width="250" side="left" overlay behavior="mobile" class="bg-black" dark elevated>
+        <q-drawer v-model="leftDrawerOpen" :width="250" side="left" overlay behavior="mobile" class="bg-black" style="background-color: white !important;">
           <router-link to="/perfil" class="text-weight-bold">
             <q-img class="absolute-top" src="https://cdn.quasar.dev/img/material.png" style="height: 150px">
               <div class="absolute-bottom bg-transparent">
@@ -225,5 +225,9 @@ hr {
   justify-content: center;
   align-items: center;
   margin-bottom: 100px;
+}
+
+.home1{
+  margin-top: 3%;
 }
 </style>
