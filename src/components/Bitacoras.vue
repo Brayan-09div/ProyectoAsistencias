@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div id="en" class="header">
-      <button id="atras" @click="Salir">
+      <button id="atras" @click="Salir()">
         <span class="material-symbols-outlined">arrow_back</span>
       </button>
       <h1 id="programas">Bitacoras</h1>
@@ -370,8 +370,8 @@ const columns = ref([
 ]);
 
 
-function Salir() {
-  router.push({ name: 'menu' });
+const Salir = async () => {
+  router.replace("/home")
 }
 
 function cerrar() {

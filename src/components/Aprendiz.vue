@@ -75,11 +75,15 @@
   </template>
   
   <script setup>
+  import { useRouter } from 'vue-router';
   import { onBeforeMount, ref, watch } from "vue";
   import { useQuasar } from 'quasar';
   import { useAprendizStore } from "../stores/aprendiz.js";
   import { useFichaStore } from '../stores/fichas.js';
   import { Dark } from 'quasar';
+
+
+  const router = useRouter();
   
   const useAprendiz = useAprendizStore();
   const useFicha = useFichaStore();
