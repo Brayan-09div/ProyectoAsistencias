@@ -104,7 +104,7 @@
 
         <div class="inscripciones">
           <h1 v-if="isHome" id="inscrip">INSCRIPCIÓN</h1>
-          <q-btn v-if="isHome" id="REGISTRO" color="primary" clickable to="/inscripcion" v-ripple>REGISTRO</q-btn>
+          <q-btn v-if="isHome" id="REGISTRO" color="primary" clickable to="/isncripcion" v-ripple>REGISTRO</q-btn>
         </div>
 
         <q-footer elevated class="bg-black text-white">
