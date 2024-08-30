@@ -46,7 +46,7 @@
                 <q-item-section>FICHAS</q-item-section>
               </q-item>
 
-              <q-item clickable to="/inscripcion" v-ripple class="menu-button">
+              <q-item clickable to="/isncripcion" v-ripple class="menu-button">
                 <q-item-section>INSCRIPCIÓN</q-item-section>
               </q-item>
             </q-list>
