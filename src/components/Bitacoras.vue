@@ -18,7 +18,7 @@
         hide-selected
         fill-input
         input-debounce="0"
-        :options="fichaOptions"
+        :options="options"
         @filter="filterFichas"
         label="Selecciona una ficha"
       >
@@ -42,8 +42,8 @@
         hide-selected
         fill-input
         input-debounce="0"
-        :options="aprendizOptions"
-        @filter="filterAprendices"
+        :options="optionsAprendiz"
+        @filter="filterAprendiz"
         label="Selecciona un aprendiz"
       >
         <template v-slot:no-option>
@@ -202,7 +202,7 @@ async function traer() {
     label: item.nombre,
     value: item._id
   }));
-
+  
   rows.value = res.map(bitacora => {
     const fecha = new Date(bitacora.fecha);
     const dia = String(fecha.getDate()).padStart(2, '0');
@@ -239,8 +239,7 @@ async function listarFechas() {
 
 async function listarFecha() {
   try {
-    const res = await useBitacora.listarBitacorasFechaUnica(fecha.value);
-    
+    const res = await useBitacora.listarBitacorasFechaUnica(fecha.value);    
     if (!res?.response?.data?.errors) {
       rows.value = res.map(bitacora => {
         const fecha = new Date(bitacora.fecha);
@@ -264,6 +263,7 @@ async function listarFecha() {
 async function listarBitacorasFicha() {
   try {
     const res = await useBitacora.listarBitacorasFicha(IdFicha.value.value);
+        console.log(fichas.value);
   
     if (!res?.response?.data?.errors) {
       rows.value = res.map(bitacora => {
@@ -287,11 +287,8 @@ async function listarBitacorasFicha() {
 
 async function listarBitacorasAprendiz() {
   try {
-    console.log(idAprendis.value);
-    
     const res = await useBitacora.listarBitacorasAprendiz(idAprendis.value.value);
-
-    
+  
     if (!res?.response?.data?.errors) {
       rows.value = res.map(bitacora => {
         const fecha = new Date(bitacora.fecha);
@@ -312,34 +309,7 @@ async function listarBitacorasAprendiz() {
   }
 }
 
-async function crearBitacora() {
-  try {
-    const res = await useBitacora.crearBitacora({
-      fecha: new Date().toISOString(),
-      nombre: nom.value,
-      cc: cc.value,
-      ficha: IdFicha.value,
-      email: email.value,
-      telefono: telefono.value,
-      estado: 'pendiente'
-    });
-    
-    if (!res?.response?.data?.errors) {
-      $q.notify({
-        type: 'positive',
-        message: 'Bitácora creada correctamente.'
-      });
-      fixed.value = false;
-      traer();
-    }
-  } catch (error) {
-    console.error('Error al crear la bitácora:', error);
-    $q.notify({
-      type: 'negative',
-      message: 'Error al crear la bitácora.'
-    });
-  }
-}
+
 
 function cambiarEstado(id, nuevoEstado) {
   useBitacora.actulizarEstado(id, nuevoEstado)
