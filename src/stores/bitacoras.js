@@ -107,6 +107,21 @@ export const useBitacoraStore = defineStore("bitacora", () => {
     }
   };
 
+  const listarBitacoraFechaFicha = async (IdFicha, fecha) => {
+    try {
+      let r = await axios.get(`/Bitacoras/ListarFichaFecha/${IdFicha}/${fecha}`, {
+        headers: {
+          "x-token": useUsuarios.xtoken,
+        },
+      });
+      console.log(r);
+      return r.data;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  };
+
   const actulizarEstado = async (id, estado) => {
     try {
       let r = await axios.put(
@@ -142,5 +157,6 @@ export const useBitacoraStore = defineStore("bitacora", () => {
     listarBitacorasFicha,
     listarBitacorasAprendiz,
     listarBitacorasFechaUnica,
+    listarBitacoraFechaFicha,
   };
 });

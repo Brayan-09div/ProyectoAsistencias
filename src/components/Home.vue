@@ -43,6 +43,14 @@
                 <q-item-section>BITACORAS</q-item-section>
               </q-item>
 
+              <q-item clickable to="/informesAprendiz" v-ripple class="menu-button">
+                <q-item-section>informes Aprendiz</q-item-section>
+              </q-item>
+
+              <q-item clickable to="/informes" v-ripple class="menu-button">
+                <q-item-section>informes</q-item-section>
+              </q-item>
+
               <q-item clickable to="/fichas" v-ripple class="menu-button">
                 <q-item-section>FICHAS</q-item-section>
               </q-item>
