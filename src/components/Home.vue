@@ -5,90 +5,59 @@
       <hr v-if="isHome">
 
       <q-layout view="hHh LpR fFf">
-
         <q-header elevated class="bg-black text-white">
           <q-toolbar style="background-color: #307e35;">
             <q-btn dense flat round icon="menu" @click="toggleLeftDrawer"></q-btn>
-            <q-toolbar-title style="font-weight: bold;">
-              REPFORA
-            </q-toolbar-title>
-            <q-btn class="btnSalir" @click="Salir()" color="green-9" style="border: 0px; background-color: none;">
+            <q-toolbar-title style="font-weight: bold;">REPFORA</q-toolbar-title>
+            <q-btn class="btnSalir" @click="Salir" color="green-9" style="border: 0px; background-color: none;">
               <span class="material-symbols-outlined">logout</span>
             </q-btn>
           </q-toolbar>
         </q-header>
 
-<<<<<<< HEAD
-        <q-drawer v-model="leftDrawerOpen" :width="250" side="left" overlay behavior="mobile" class="bg-white" elevated>
+        <q-drawer v-model="leftDrawerOpen" :width="250" side="left" overlay behavior="mobile" class="bg-black"
+          style="background-color: white !important;">
           <router-link to="/perfil" class="text-weight-bold">
             <q-img class="absolute-top" src="https://cdn.quasar.dev/img/material.png" style="height: 150px">
               <div class="absolute-bottom bg-transparent">
                 <q-avatar size="60px" class="q-mb-sm">
                   <img src="https://cdn.quasar.dev/img/boy-avatar.png">
                 </q-avatar>
-                <div>Nombre</div>
+                <div>{{ useUsuarios.usuarios.usuario.nombre }}</div>
               </div>
             </q-img>
           </router-link>
-=======
-      <q-drawer v-model="leftDrawerOpen" :width="250" side="left" overlay behavior="mobile" class="bg-black" dark
-        elevated>
-        <router-link to="/perfil" class="text-weight-bold">
-          <q-img class="absolute-top" src="https://cdn.quasar.dev/img/material.png" style="height: 150px">
-            <div class="absolute-bottom bg-transparent">
-              <q-avatar size="60px" class="q-mb-sm">
-                <img src="https://cdn.quasar.dev/img/boy-avatar.png">
-              </q-avatar>
-
-              <div>Nombre</div>
-            </div>
-          </q-img>
-        </router-link>
->>>>>>> afaf9b5eb317962abdccf609fa94c2038e5ff146
 
           <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd">
             <q-list padding>
               <!-- Lista de opciones -->
               <q-item clickable to="/usuario" v-ripple class="menu-button">
-                <q-item-section>
-                  USUARIOS
-                </q-item-section>
+                <q-item-section>USUARIOS</q-item-section>
               </q-item>
 
               <q-item clickable to="/aprendiz" v-ripple class="menu-button">
-                <q-item-section>
-                  APRENDICES
-                </q-item-section>
+                <q-item-section>APRENDICES</q-item-section>
               </q-item>
 
               <q-item clickable to="/bitacoras" v-ripple class="menu-button">
-                <q-item-section>
-                  BITACORAS
-                </q-item-section>
+                <q-item-section>BITACORAS</q-item-section>
               </q-item>
 
               <q-item clickable to="/fichas" v-ripple class="menu-button">
-                <q-item-section>
-                  FICHAS
-                </q-item-section>
-              </q-item>
-
-              <q-item clickable to="/isncripcion" v-ripple class="menu-button">
-                <q-item-section>
-                  INSCRIPCION
-                </q-item-section>
+                <q-item-section>FICHAS</q-item-section>
               </q-item>
             </q-list>
           </q-scroll-area>
         </q-drawer>
 
         <div>
-          <Router-view />
+          <router-view />
         </div>
 
         <div class="cards" v-if="isHome">
           <q-card class="my-card">
-            <q-img src="https://images.pexels.com/photos/3184396/pexels-photo-3184396.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2">
+            <q-img
+              src="https://images.pexels.com/photos/3184396/pexels-photo-3184396.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2">
               <div class="text-subtitle2 absolute-top text-center" style="font-weight: bold; font-size: 15px;">
                 USUARIOS
               </div>
@@ -98,48 +67,49 @@
             </q-card-section>
           </q-card>
           <q-card class="my-card">
-      <q-img src="https://images.pexels.com/photos/711009/pexels-photo-711009.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2">
-        <div class="text-subtitle2 absolute-top text-center" style="font-weight: bold; font-size: 15px;">
-          APRENDICES
-        </div>
-      </q-img>
-      <q-card-section>
-        <q-btn id="Ver" color="primary" clickable to="/aprendiz" v-ripple>Ver</q-btn>
-      </q-card-section>
-    </q-card>
-    <q-card class="my-card">
-      <q-img src="https://images.pexels.com/photos/7648055/pexels-photo-7648055.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2">
-        <div class="text-subtitle2 absolute-top text-center" style="font-weight: bold; font-size: 15px;">
-          BITACORAS
-        </div>
-      </q-img>
-      <q-card-section>
-        <q-btn id="Ver" color="primary" clickable to="/bitacoras" v-ripple>Ver</q-btn>
-      </q-card-section>
-    </q-card>
-    <q-card class="my-card">
-      <q-img src="https://images.pexels.com/photos/1595385/pexels-photo-1595385.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2">
-        <div class="text-subtitle2 absolute-top text-center" style="font-weight: bold; font-size: 15px;">
-          FICHAS
-        </div>
-      </q-img>
-      <q-card-section>
-        <q-btn id="Ver" color="primary" clickable to="/fichas" v-ripple>Ver</q-btn>
-      </q-card-section>
-    </q-card>
+            <q-img
+              src="https://images.pexels.com/photos/711009/pexels-photo-711009.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2">
+              <div class="text-subtitle2 absolute-top text-center" style="font-weight: bold; font-size: 15px;">
+                APRENDICES
+              </div>
+            </q-img>
+            <q-card-section>
+              <q-btn id="Ver" color="primary" clickable to="/aprendiz" v-ripple>Ver</q-btn>
+            </q-card-section>
+          </q-card>
+          <q-card class="my-card">
+            <q-img
+              src="https://images.pexels.com/photos/7648055/pexels-photo-7648055.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2">
+              <div class="text-subtitle2 absolute-top text-center" style="font-weight: bold; font-size: 15px;">
+                BITACORAS
+              </div>
+            </q-img>
+            <q-card-section>
+              <q-btn id="Ver" color="primary" clickable to="/bitacoras" v-ripple>Ver</q-btn>
+            </q-card-section>
+          </q-card>
+          <q-card class="my-card">
+            <q-img
+              src="https://images.pexels.com/photos/1595385/pexels-photo-1595385.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2">
+              <div class="text-subtitle2 absolute-top text-center" style="font-weight: bold; font-size: 15px;">
+                FICHAS
+              </div>
+            </q-img>
+            <q-card-section>
+              <q-btn id="Ver" color="primary" clickable to="/fichas" v-ripple>Ver</q-btn>
+            </q-card-section>
+          </q-card>
         </div>
 
         <hr v-if="isHome">
 
-        <div class="inscripciones">
-        <h1 v-if="isHome" id="inscrip">INSCRIPCION</h1>
-        <q-btn v-if="isHome" id="REGISTRO" color="primary" clickable to="/isncripcion" v-ripple>REGISTRO</q-btn>
-        </div>
+  
 
         <q-footer elevated class="bg-black text-white">
           <q-toolbar style="background-color: #307e35">
             <q-toolbar-title class="text-center">
-              <span class="text-bold" style="font-size: 15px">Soporte</span><span> - {{ new Date().getFullYear() }}</span>
+              <span class="text-bold" style="font-size: 15px">Soporte</span><span> - {{ new Date().getFullYear()
+                }}</span>
             </q-toolbar-title>
           </q-toolbar>
         </q-footer>
@@ -155,21 +125,19 @@ import { useUsuariosStore } from "../stores/usuarios";
 
 const router = useRouter();
 const route = useRoute();
-let useUsuarios = useUsuariosStore();
-
+const useUsuarios = useUsuariosStore();
 const leftDrawerOpen = ref(false);
+const isHome = ref(route.path === '/home'); 
 
 const toggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 };
 
 const Salir = async () => {
-  const res = await useUsuarios.logout();
+  await useUsuarios.logout();
   router.replace("/");
-  console.log(res);
 };
 
-// Monitorea los cambios de ruta para actualizar el estado `isHome`
 watch(
   () => route.path,
   (newPath) => {
@@ -185,18 +153,8 @@ watch(
   font-size: 35px;
 }
 
-#programas {
-  font-size: 20px;
-  font-weight: bold;
-  text-align: center;
-  flex-grow: 1;
-  padding-top: 0px;
-  margin-top: 0px;
-  padding-top: 40px;
-  margin-bottom: 0px;
-}
-
-#inscrip{
+#programas,
+#inscrip {
   font-size: 20px;
   font-weight: bold;
   text-align: center;
@@ -229,17 +187,10 @@ hr {
   display: flex;
   flex-direction: column;
   margin-left: 2%;
-
 }
 
 .menu-button:hover {
   background-color: #276527;
-}
-
-.menu-button q-item-section {
-  text-align: center;
-  width: 100%;
-  justify-content: center;
 }
 
 .cards {
@@ -255,7 +206,8 @@ hr {
   align-items: center;
 }
 
-#Ver, #REGISTRO {
+#Ver,
+#REGISTRO {
   background-color: #2F7D32 !important;
   font-size: 15px;
   font-weight: bold;
@@ -274,5 +226,9 @@ hr {
   justify-content: center;
   align-items: center;
   margin-bottom: 100px;
+}
+
+.home1 {
+  margin-top: 3%;
 }
 </style>

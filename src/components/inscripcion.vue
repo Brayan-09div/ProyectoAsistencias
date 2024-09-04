@@ -1,60 +1,42 @@
 <template>
-<<<<<<< HEAD
-  <button id="atras" @click="Salir()"><span class="material-symbols-outlined">arrow_back</span></button>
-  <div class="form-container">
-    <form>
-      <label for="cc">Número de Identificación:</label>
-      <input type="text" id="cc" v-model="ccNumber" />
-=======
+  <button id="atras" @click="Salir()">
+    <span class="material-symbols-outlined">arrow_back</span>
+  </button>
   <div class="form-container">
     <form @submit.prevent="crearBitacora">
       <label for="cc">Número de Identificación:</label>
       <input type="text" id="cc" v-model="cc" required>
->>>>>>> afaf9b5eb317962abdccf609fa94c2038e5ff146
       <button type="submit">Aceptar</button>
     </form>
   </div>
 </template>
-<<<<<<< HEAD
 
-<script setup>
-import { useRouter } from 'vue-router';
-import { ref } from 'vue';
-
-let ccNumber = ref("");
-const router = useRouter();
-
-const Salir = async () => {
-  router.replace("/home");
-};
-</script>
-=======
-  
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useBitacoraStore } from '../stores/bitacoras.js'; 
 
-const useBitacora = useBitacoraStore();
 const cc = ref('');
 const router = useRouter();
+const bitacoraStore = useBitacoraStore();
+
+const Salir = () => {
+  router.replace("/home");
+};
 
 const crearBitacora = async () => {
-  if (cc.value) {
+  if (cc.value.trim()) {
     try {
-      await useBitacora.crearBitacora(cc.value);
+      await bitacoraStore.crearBitacora(cc.value.trim());
       cc.value = '';
     } catch (error) {
       console.error('Error al crear la bitácora:', error);
-     
     }
   } else {
     console.error("El campo CC es obligatorio");
   }
 };
 </script>
-
->>>>>>> afaf9b5eb317962abdccf609fa94c2038e5ff146
 
 <style scoped>
 body {
