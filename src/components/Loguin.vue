@@ -31,6 +31,12 @@
         <q-card-actions align="center">
           <q-btn class="boton" @click="login" label="Iniciar Sesión" color="primary" />
         </q-card-actions>
+
+        <q-card-actions align="center" class="q-mt-md">
+          <router-link to="/enviarCorreo">
+            <q-btn flat label="¿Olvidaste tu contraseña?" color="secondary" />
+          </router-link>
+        </q-card-actions>
       </q-card>
     </div>
   </div>
@@ -104,3 +110,4 @@ async function login() {
   margin-top: 15px;
 }
 </style>
+

@@ -192,7 +192,7 @@
               fixed.value = false;
           }
       } else {
-          let res = await useAprendiz.guardarAprendiz(cc.value, nom.value, email.value, telefono.value, IdFicha.value.value);
+          let res = await useAprendiz.guardarAprendis(cc.value, nom.value, email.value, telefono.value, IdFicha.value.value);
           if (res?.response?.data?.errors) {
               fixed.value = true;
           } else {

@@ -8,6 +8,8 @@ import inscripcion from '../components/inscripcion.vue'
 import perfil from '../components/Perfil.vue'
 import InformesAprendiz from '../components/InformesAprendiz.vue'
 import Informes from '../components/Informes.vue'
+import recuperar from '../components/Recuperar.vue'
+import enviarCorreo from '../components/enviarCorreo.vue'
 
 import { createRouter, createWebHashHistory } from 'vue-router'
 
@@ -24,7 +26,10 @@ const routes = [
         { path: '/informes', component: Informes },
     ] },
     {path: '/isncripcion',  component: inscripcion},
-    {path: '/',  component: loguin}
+    {path: '/',  component: loguin},
+    {path: '/recuperar',  component: recuperar},
+    {path: '/enviarCorreo',  component: enviarCorreo},
+ 
 ]
 
 export const router = createRouter({
