@@ -120,6 +120,7 @@ async function listarBitacorasFichaFecha() {
   });
 }
 
+
 function cambiarEstado(id, nuevoEstado) {
   useBitacora.actulizarEstado(id, nuevoEstado)
     .then(() => {

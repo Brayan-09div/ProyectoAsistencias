@@ -81,6 +81,7 @@ export const useUsuariosStore = defineStore(
       }
     };
 
+
     const editarUsuario = async (id, emial, nom) => {
       console.log(id);
       try {
@@ -112,6 +113,36 @@ export const useUsuariosStore = defineStore(
         return error;
       }
     };
+    
+    const cambiarPassword = async (id, contraseñavieja, password) => {
+      try {
+        let r = await axios.put(
+          `/Usuarios/cambiarContrasena/${id}`,
+          { contraseñavieja: contraseñavieja, password: password },
+          {
+            headers: {
+              "x-token": xtoken.value,
+            },
+          }
+        );
+        Notify.create({
+          color: "positive",
+          message: "Contraseña cambiada exitosamente",
+          icon: "check_circle",
+          timeout: 2500,
+        });
+        return r;
+      } catch (error) {
+        Notify.create({
+          color: "negative",
+          message: error.response.data.errors[0].msg || "Error al cambiar la contraseña",
+          icon: "error",
+          timeout: 2500,
+        });
+        return error;
+      }
+    };
+    
 
     const activarDesactivarUsuario = async (id) => {
       try {
@@ -228,6 +259,7 @@ export const useUsuariosStore = defineStore(
       logout,
       solicitarRecuperacion,
       restablecerContrasena,
+      cambiarPassword,
       xtoken,
       usuarios,
     };
