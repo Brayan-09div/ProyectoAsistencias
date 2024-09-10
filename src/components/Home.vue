@@ -18,12 +18,12 @@
         <q-drawer v-model="leftDrawerOpen" :width="250" side="left" overlay behavior="mobile" class="bg-black"
           style="background-color: white !important;">
           <router-link to="/perfil" class="text-weight-bold">
-            <q-img class="absolute-top" src="https://cdn.quasar.dev/img/material.png" style="height: 150px">
+            <q-img class="absolute-top" src="https://images.pexels.com/photos/220326/pexels-photo-220326.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" style="height: 150px">
               <div class="absolute-bottom bg-transparent">
-                <q-avatar size="60px" class="q-mb-sm">
-                  <img src="https://cdn.quasar.dev/img/boy-avatar.png">
+                <q-avatar size="70px" class="q-mb-sm">
+                  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWoms2HEy0ELPrZGRr001PN2sh5sq9dU_BWQ&s">
                 </q-avatar>
-                <div>{{ useUsuarios.usuarios.usuario.nombre }}</div>
+                <div style="text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3); text-transform: uppercase;">{{ useUsuarios.usuarios.usuario.nombre }}</div>
               </div>
             </q-img>
           </router-link>
@@ -44,11 +44,11 @@
               </q-item>
 
               <q-item clickable to="/informesAprendiz" v-ripple class="menu-button">
-                <q-item-section>informes Aprendiz</q-item-section>
+                <q-item-section>INFORMES APRENDIZ</q-item-section>
               </q-item>
 
               <q-item clickable to="/informes" v-ripple class="menu-button">
-                <q-item-section>informes</q-item-section>
+                <q-item-section>INFORMES</q-item-section>
               </q-item>
 
               <q-item clickable to="/fichas" v-ripple class="menu-button">
@@ -204,7 +204,7 @@ hr {
 .cards {
   width: 70%;
   margin: 0 auto;
-  margin-bottom: 50px;
+  margin-bottom: 120px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 15px;

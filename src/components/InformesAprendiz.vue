@@ -4,11 +4,15 @@
             <button id="atras" @click="Salir">
                 <span class="material-symbols-outlined">arrow_back</span>
             </button>
-            <h1 id="programas">informes Aprendiz</h1>
+            <h1 id="programas">Informes Aprendiz</h1>
         </div>
+        <hr>
 
-
-        <div>
+        <q-dialog v-model="mostrarModal" persistent>
+        <q-card class="modal-card">
+            <div class="modal-header">Seleccionar Filtro</div>
+            <div class="modal-body">
+        <div class="lista">
             <q-select rounded outlined v-model="idAprendis" use-input hide-selected fill-input input-debounce="0"
                 :options="optionsAprendiz" @filter="filterAprendiz" label="Selecciona un aprendiz">
                 <template v-slot:no-option>
@@ -19,10 +23,21 @@
                     </q-item>
                 </template>
             </q-select>
-            <button @click="listarBitacorasAprendiz()">listar Aprendiz</button>
         </div>
-        <div style="margin: 0px;">
+        </div>
+
+       <div class="modal-footer">
+        <q-card-actions align="right">
+          <q-btn id="cierra" flat label="Cerrar" color="primary" v-close-popup @click="cerrarModal" />
+          <q-btn id="lista" flat label="Listar" color="primary" @click="listarBitacorasAprendiz" />
+        </q-card-actions>
+      </div>
+      </q-card>
+    </q-dialog>
+
+    <div style="margin: 0px;">
             <div class="tablafichas">
+                <button id="btnlist" @click="abrirModal()">LISTAR APRENDIZ</button>
              
                 <q-table :rows="rows" :columns="columns" row-key="_id">
                     <template v-slot:body-cell-estado="props">
@@ -31,6 +46,11 @@
                                 @update:model-value="cambiarEstado(props.row._id, props.row.estado)" />
                         </q-td>
                     </template>
+                    <template v-slot:header-cell="props">
+            <q-th :props="props" :style="{ fontWeight: 'bold', color: 'black', fontSize: '14px' }">
+              {{ props.col.label }}
+            </q-th>
+          </template>
                 </q-table>
 
                 <q-dialog v-model="fixed" :backdrop-filter="'blur(4px) saturate(150%)'" transition-show="rotate"
@@ -67,7 +87,7 @@
                         </q-card-actions>
                     </q-card>
                 </q-dialog>
-                <q-toggle v-model="isDark" label="Modo Oscuro" />
+                <!-- <q-toggle v-model="isDark" label="Modo Oscuro" /> -->
             </div>
         </div>
     </div>
@@ -104,7 +124,7 @@ let idAprendis = ref("");
 
 let aprendiz = ref([]);
 let optionsAprendiz = ref(aprendiz.value);
-
+const mostrarModal = ref(false); 
 
 
 watch(isDark, val => Dark.set(val));
@@ -174,6 +194,7 @@ async function listarBitacorasAprendiz() {
             message: 'Error al listar bitácoras por aprendiz.'
         });
     }
+    mostrarModal.value = false;
 }
 
 
@@ -195,23 +216,31 @@ function cambiarEstado(id, nuevoEstado) {
         });
 }
 const columns = ref([
-    { name: 'fecha', label: 'Fecha', field: 'fecha', align: 'center', sortable: true },
-    { name: 'IdAprendiz', align: 'center', label: 'Nombre Aprendiz', field: row => row?.IdAprendis?.nombre, sortable: true },
-    { name: 'IdAprendiz', align: 'center', label: 'Teléfono Aprendiz', field: row => row?.IdAprendis?.telefono, sortable: true },
-    { name: 'IdAprendiz', align: 'center', label: 'Email Aprendiz', field: row => row?.IdAprendis?.email, sortable: true },
-    { name: 'IdAprendiz', align: 'center', label: 'Cc', field: row => row?.IdAprendis?.cc, sortable: true },
-    { name: 'nombreFicha', align: 'center', label: 'Nombre Ficha', field: row => row?.IdAprendis?.IdFicha?.nombre, sortable: true },
-    { name: 'codigoFicha', align: 'center', label: 'Código Ficha', field: row => row?.IdAprendis?.IdFicha?.codigo, sortable: true },
-    { name: 'estado', align: 'center', label: 'Estado', field: 'estado', sortable: true },
+    { name: 'fecha', label: 'FECHA', field: 'fecha', align: 'center', sortable: true },
+    { name: 'IdAprendiz', align: 'center', label: 'NOMBRE', field: row => row?.IdAprendis?.nombre, sortable: true },
+    { name: 'IdAprendiz', align: 'center', label: 'TELEFONO', field: row => row?.IdAprendis?.telefono, sortable: true },
+    { name: 'IdAprendiz', align: 'center', label: 'EMAIL', field: row => row?.IdAprendis?.email, sortable: true },
+    { name: 'IdAprendiz', align: 'center', label: 'DOCUMENTO', field: row => row?.IdAprendis?.cc, sortable: true },
+    { name: 'nombreFicha', align: 'center', label: 'NOMBRE FICHA', field: row => row?.IdAprendis?.IdFicha?.nombre, sortable: true },
+    { name: 'codigoFicha', align: 'center', label: 'CODIGO FICHA', field: row => row?.IdAprendis?.IdFicha?.codigo, sortable: true },
+    { name: 'estado', align: 'center', label: 'ESTADO', field: 'estado', sortable: true },
 ]);
 
 
-function Salir() {
-    router.push({ name: 'menu' });
+function abrirModal() {
+  mostrarModal.value = true; // Abre el modal
+}
+
+function cerrarModal() {
+  mostrarModal.value = false; // Cierra el modal
+}
+
+const Salir = async () => {
+  router.replace("/home")
 }
 
 function cerrar() {
-    fixed.value = false;
+  fixed.value = false;
 }
 
 </script>
@@ -233,30 +262,90 @@ function cerrar() {
 }
 
 #atras {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: rgb(8, 73, 55);
-    color: white;
-    margin-left: 25px;
-    margin-top: 10px;
+  width: 40px; /* Aumenté el tamaño para mejorar la clicabilidad */
+  height: 40px; /* Aumenté el tamaño para mejorar la clicabilidad */
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  background-color: rgb(8, 73, 55);
+  color: white;
+  margin-left: 5%;
+  margin-top: 0%;
+  cursor: pointer; /* Asegura que se vea como un botón clickeable */
+}
+
+#atras:focus {
+  outline: none; /* Elimina el borde de enfoque */
 }
 
 hr {
-    width: 80%;
+    width: 90%;
     border: 2px solid #2F7D32;
     margin: -20px auto 0;
-}
+    margin-bottom: 20px;
+    margin-top: 5PX;
+  }
 
 .tablafichas {
-    width: 80%;
+    width: 90%;
     margin: 0 auto;
 }
 
-#agregarficha {
-    margin: 30px auto 20px;
+#btnlist{
+  background-color: #2F7D32 !important;
+  font-size: 13px;
+  font-weight: bold;
+  color: white;
+  border-radius: 3px;
+  border: 0px;
+  height: 35px;
+  width: 150px;
+  margin-bottom: 20PX;
+}
+
+.modal-card {
+  max-width: 400px;
+  width: 100%;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  background-color: #f8f9fa;
+}
+
+
+
+.modal-header {
+  background-color: #2F7D32;
+  color: white;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  padding: 16px;
+  font-weight: bold !important;
+  font-size: 18px;
+  text-align: center;
+}
+
+.modal-body {
+  padding: 35px;
+}
+
+.modal-footer {
+  padding: 16px;
+  background-color: #f1f1f1;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+}
+
+#lista {
+  background-color: #2F7D32 !important;
+  font-size: 13px;
+  font-weight: bold;
+  color: white !important;
+}
+
+#cierra {
+  color: black !important;
+  border: 1px black;
 }
 </style>

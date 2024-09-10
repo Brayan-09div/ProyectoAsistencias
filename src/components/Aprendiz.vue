@@ -24,51 +24,49 @@
             </q-th>
           </template>
           <template v-slot:body-cell-estado="props">
-            <q-td :props="props">
+              <q-td :props="props">
               <q-btn @click="activar(props.row._id)" :color="props.row.estado == 1 ? 'green' : 'red'">
                 {{ props.row.estado == 1 ? 'Activo' : 'Inactivo' }}
               </q-btn>
-            </q-td>
+              </q-td>
           </template>
         </q-table>
         <q-dialog v-model="fixed" :backdrop-filter="'blur(4px) saturate(150%)'" transition-show="rotate"
-          transition-hide="rotate" persistent>
-          <q-card>
-            <q-card-section>
-              <div class="text-h6">{{ b ? "Editar Aprendiz" : "Guardar Aprendiz" }}</div>
-            </q-card-section>
-  
-            <q-separator />
-  
-            <q-card-section style="max-height: 50vh" class="scroll">
-              <q-input filled v-model="nom" label="Nombre Del Aprendiz" :dense="dense" :error="nomError"
-                error-message="El nombre del aprendiz es requerido" />
-              <q-input filled v-model="cc" label="CC" :dense="dense" :error="ccError"
-                error-message="El CC es requerido" />
-              <q-select rounded outlined v-model="IdFicha" use-input hide-selected fill-input input-debounce="0"
-                :options="options" @filter="filterFn" label="Selecciona una ficha">
-                <template v-slot:no-option>
-                  <q-item>
-                    <q-item-section class="text-grey">
-                      Sin resultados
-                    </q-item-section>
-                  </q-item>
-                </template>
-              </q-select>
-              <q-input type="email" filled v-model="email" label="Email del Aprendiz" :dense="dense" :error="emailError"
-                error-message="El email del aprendiz es requerido" />
-              <q-input filled v-model="telefono" label="Telefono Del Aprendiz" :dense="dense" :error="telefonoError"
-                error-message="El teléfono del aprendiz es requerido" />
-            </q-card-section>
-  
-            <q-separator />
-  
-            <q-card-actions align="right">
-              <q-btn flat label="Cerrar" color="primary" v-close-popup @click="cerrar()" />
-              <q-btn flat label="Guardar" color="primary" @click="crearAprendiz()" />
-            </q-card-actions>
-          </q-card>
-        </q-dialog>
+  transition-hide="rotate" persistent>
+  <q-card class="modal-card">
+    <div class="modal-header">
+      {{ b ? "Editar Aprendiz" : "Guardar Aprendiz" }}
+    </div>
+
+    <div class="modal-body">
+      <q-input filled v-model="nom" label="Nombre Del Aprendiz" :dense="dense" :error="nomError"
+        error-message="El nombre del aprendiz es requerido" />
+      <q-input filled v-model="cc" label="CC" :dense="dense" :error="ccError"
+        error-message="El CC es requerido" />
+      <q-select rounded outlined v-model="IdFicha" use-input hide-selected fill-input input-debounce="0"
+        :options="options" @filter="filterFn" label="Selecciona una ficha">
+        <template v-slot:no-option>
+          <q-item>
+            <q-item-section class="text-grey">
+              Sin resultados
+            </q-item-section>
+          </q-item>
+        </template>
+      </q-select>
+      <q-input type="email" filled v-model="email" label="Email del Aprendiz" :dense="dense" :error="emailError"
+        error-message="El email del aprendiz es requerido" />
+      <q-input filled v-model="telefono" label="Telefono Del Aprendiz" :dense="dense" :error="telefonoError"
+        error-message="El teléfono del aprendiz es requerido" />
+    </div>
+
+    <div class="modal-footer">
+      <q-card-actions align="right">
+        <q-btn flat label="Cerrar" color="primary" v-close-popup @click="cerrar()" class="btn-cerrar" />
+        <q-btn flat label="Guardar" color="primary" @click="crearAprendiz()" class="btn-guardar" />
+      </q-card-actions>
+    </div>
+  </q-card>
+</q-dialog>
         <!-- <q-toggle v-model="isDark" label="Modo Oscuro" /> -->
       </div>
     </div>
@@ -166,10 +164,10 @@
       telefonoError.value = false;
   }
   
-  async function activar(id) {
-      await useAprendiz.activarDesactivarAprendiz(id);
-      await traer();
-  }
+  async function Activar(id) {
+  await useAprendiz.activarDesactivarAprendiz(id);
+  await traer();
+}
   
   async function crearAprendiz() {
 
@@ -325,9 +323,21 @@ hr {
   text-align: center;
 }
 
-.modal-body {
-  padding: 35px;
+.q-dialog__inner {
+  max-height: 90vh; /* Limita la altura del modal */
+  overflow: hidden; /* Oculta el scroll en el modal */
 }
+
+.modal-body {
+  max-height: calc(90vh - 200px); /* Ajusta el tamaño para permitir espacio dentro del modal */
+  overflow-y: auto;
+  padding: 35px; /* Permite el scroll dentro de la parte de contenido */
+}
+
+.modal-body::-webkit-scrollbar {
+  display: none;
+}
+
 
 .modal-footer {
   padding: 16px;
@@ -336,7 +346,6 @@ hr {
   border-bottom-right-radius: 15px;
 }
 
-/* Estilos personalizados para los botones */
 .btn-guardar {
   background-color: #2F7D32 !important;
   color: white !important;

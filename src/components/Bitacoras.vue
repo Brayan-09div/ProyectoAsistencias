@@ -1,16 +1,47 @@
 <template>
-  <div>
+<div>
     <div id="en">
       <button id="atras" @click="Salir">
         <span class="material-symbols-outlined">arrow_back</span>
       </button>
       <h1 id="programas">Bitacoras</h1>
-      <q-input v-model="fechaInicio" filled type="date" hint="Native date" />
-      <q-input v-model="fechaFin" filled type="date" hint="Native date" />
-      <button @click="listarFechas()">listar Fechas</button>
     </div>
-    <div>
-      <q-select rounded outlined v-model="IdFicha" use-input hide-selected fill-input input-debounce="0"
+    <hr>
+
+    <div class="btnsB">
+      <q-btn id="agregarficha" @click="fixed = true" color="primary">
+        <span class="material-symbols-outlined">add_circle</span>Crear
+      </q-btn>
+      <button id="btnlist" @click="abrirModal1()">LISTAR FECHAS</button>
+      <button id="btnlist" @click="abrirModal2()">LISTAR FICHA</button>
+      <button id="btnlist" @click="abrirModal3()">LISTAR APRENDIZ</button>
+      <button id="btnlist" @click="abrirModal4()">LISTAR FECHA</button>
+
+
+      <q-dialog v-model="mostrarModal1" persistent>
+      <q-card class="modal-card">
+          <div class="modal-header">Listar Fechas</div>
+          <div class="modal-body">
+      <q-input v-model="fechaInicio" filled type="date" />
+      <BR></BR>
+      <q-input v-model="fechaFin" filled type="date" />
+      </div>
+
+      <div class="modal-footer">
+        <q-card-actions align="right">
+          <q-btn id="cierra" flat label="Cerrar" color="primary" v-close-popup @click="cerrarModal" />
+          <q-btn id="lista" flat label="Listar" color="primary" @click="listarFechas" />
+        </q-card-actions>
+      </div>
+      </q-card>
+    </q-dialog>
+      
+    
+    <q-dialog v-model="mostrarModal2" persistent>
+      <q-card class="modal-card">
+        <div class="modal-header">Listar Ficha</div>
+        <div class="modal-body">
+        <q-select rounded outlined v-model="IdFicha" use-input hide-selected fill-input input-debounce="0"
                 :options="options" @filter="filterFichas" label="Selecciona una ficha">
                 <template v-slot:no-option>
                   <q-item>
@@ -20,11 +51,23 @@
                   </q-item>
                 </template>
               </q-select>
-      <button @click="listarBitacorasFicha()">listar Ficha</button>
-    </div>
+            </div>
+            <div class="modal-footer">
+          <q-card-actions align="right">
+          <q-btn id="cierra" flat label="Cerrar" color="primary" v-close-popup @click="cerrarModal" />
+          <q-btn id="lista" flat label="Listar" color="primary" @click="listarBitacorasFicha" />
+        </q-card-actions>
+       </div>
+       </q-card>
+      </q-dialog>
 
-    <div>
-      <q-select rounded outlined v-model="idAprendis" use-input hide-selected fill-input input-debounce="0"
+
+
+      <q-dialog v-model="mostrarModal3" persistent>
+        <q-card class="modal-card">
+        <div class="modal-header">Listar Aprendiz</div>
+        <div class="modal-body">
+         <q-select rounded outlined v-model="idAprendis" use-input hide-selected fill-input input-debounce="0"
                 :options="optionsAprendiz" @filter="filterAprendiz" label="Selecciona un aprendiz">
                 <template v-slot:no-option>
                   <q-item>
@@ -34,17 +77,39 @@
                   </q-item>
                 </template>
               </q-select>
-      <button @click="listarBitacorasAprendiz()">listar Aprendiz</button>
+        </div>
+        <div class="modal-footer">
+          <q-card-actions align="right">
+          <q-btn id="cierra" flat label="Cerrar" color="primary" v-close-popup @click="cerrarModal" />
+          <q-btn id="lista" flat label="Listar" color="primary" @click="listarBitacorasAprendiz()" />
+        </q-card-actions>
+       </div>
+       </q-card>
+      </q-dialog>
+
+
+
+      <q-dialog v-model="mostrarModal4" persistent>
+        <q-card class="modal-card">
+        <div class="modal-header">Listar Fecha</div>
+        <div class="modal-body">
+      <q-input v-model="fecha" filled type="date"/>
     </div>
-    <div>
-      <q-input v-model="fecha" filled type="date" hint="Native date" />
-      <button @click="listarFecha()">listar Fecha</button>
+    <div class="modal-footer">
+          <q-card-actions align="right">
+          <q-btn id="cierra" flat label="Cerrar" color="primary" v-close-popup @click="cerrarModal" />
+          <q-btn id="lista" flat label="Listar" color="primary" @click="listarFecha()" />
+        </q-card-actions>
+       </div>
+       </q-card>
+      </q-dialog>
+    
     </div>
+</div>
+
+
     <div style="margin: 0px;">
       <div class="tablafichas">
-        <q-btn id="agregarficha" @click="fixed = true" color="primary">
-          <span class="material-symbols-outlined">add_circle</span>Crear
-        </q-btn>
         <q-table :rows="rows" :columns="columns" row-key="_id">
           <template v-slot:body-cell-estado="props">
             <q-td :props="props">
@@ -55,7 +120,14 @@
               />
             </q-td>
           </template>
+          <template v-slot:header-cell="props">
+            <q-th :props="props" :style="{ fontWeight: 'bold', color: 'black', fontSize: '14px' }">
+              {{ props.col.label }}
+            </q-th>
+          </template>
         </q-table>
+
+
 
         <q-dialog
           v-model="fixed"
@@ -64,23 +136,23 @@
           transition-hide="rotate"
           persistent
         >
-          <q-card>
-            <q-card-section>
-              <div class="text-h6">Crear Bitácora</div>
-            </q-card-section>
-            <q-separator />
-            <q-card-section style="max-height: 50vh" class="scroll">
+
+          <q-card class="modal-card">
+              <div class="modal-header">Crear Bitácora</div>
+              <div class="modal-body">
               <q-input filled v-model="nom" label="Nombre Del Aprendiz" :dense="dense" />
               <q-input filled v-model="cc" label="CC" :dense="dense" />
               <q-input filled v-model="IdFicha" label="Id De La Ficha" :dense="dense" />
               <q-input filled v-model="email" label="Email del Aprendiz" :dense="dense" />
               <q-input filled v-model="telefono" label="Teléfono Del Aprendiz" :dense="dense" />
-            </q-card-section>
-            <q-separator />
+              </div>
+           
+            <div class="modal-footer">
             <q-card-actions align="right">
-              <q-btn flat label="Cerrar" color="primary" v-close-popup @click="cerrar" />
-              <q-btn flat label="Guardar" color="primary" @click="crearBitacora" />
+              <q-btn id="cierra" flat label="Cerrar" color="primary" v-close-popup @click="cerrar" />
+              <q-btn id="lista"flat label="Guardar" color="primary" @click="crearBitacora" />
             </q-card-actions>
+          </div>
           </q-card>
         </q-dialog>
 
@@ -102,10 +174,9 @@
           </q-card>
         </q-dialog>
 
-        <q-toggle v-model="isDark" label="Modo Oscuro" />
+        <!-- <q-toggle v-model="isDark" label="Modo Oscuro" /> -->
       </div>
     </div>
-  </div>
 </template>
 
 <script setup>
@@ -140,6 +211,10 @@ let options = ref(fichas.value);
 
 let aprendiz = ref([]);
 let optionsAprendiz = ref(aprendiz.value);
+const mostrarModal1 = ref(false);
+const mostrarModal2 = ref(false);
+const mostrarModal3 = ref(false);
+const mostrarModal4 = ref(false);
 
 
 
@@ -214,6 +289,7 @@ async function listarFechas() {
       message: 'Error al listar bitácoras por fechas.'
     });
   }
+  mostrarModal1.value = false;
 }
 
 async function listarFecha() {
@@ -238,6 +314,7 @@ async function listarFecha() {
       message: 'Error al listar bitácoras por fecha.'
     });
   }
+  mostrarModal4.value = false;
 }
 
 async function listarBitacorasFicha() {
@@ -262,6 +339,7 @@ async function listarBitacorasFicha() {
       message: 'Error al listar bitácoras por ficha.'
     });
   }
+  mostrarModal2.value = false;
 }
 
 async function listarBitacorasAprendiz() {
@@ -288,7 +366,9 @@ async function listarBitacorasAprendiz() {
       type: 'negative',
       message: 'Error al listar bitácoras por aprendiz.'
     });
+    
   }
+  mostrarModal3.value = false;
 }
 
 async function crearBitacora() {
@@ -338,25 +418,44 @@ function cambiarEstado(id, nuevoEstado) {
     });
 }
 const columns = ref([
-  { name: 'fecha', label: 'Fecha', field: 'fecha', align: 'center', sortable: true },
-  { name: 'IdAprendiz', align: 'center', label: 'Nombre Aprendiz', field: row => row?.IdAprendis?.nombre, sortable: true },
-  { name: 'IdAprendiz', align: 'center', label: 'Teléfono Aprendiz', field: row => row?.IdAprendis?.telefono, sortable: true },
-  { name: 'IdAprendiz', align: 'center', label: 'Email Aprendiz', field: row => row?.IdAprendis?.email, sortable: true },
-  { name: 'IdAprendiz', align: 'center', label: 'Cc', field: row => row?.IdAprendis?.cc, sortable: true },
-  { name: 'nombreFicha', align: 'center', label: 'Nombre Ficha', field: row => row?.IdAprendis?.IdFicha?.nombre, sortable: true },
-  { name: 'codigoFicha', align: 'center', label: 'Código Ficha', field: row => row?.IdAprendis?.IdFicha?.codigo, sortable: true },
-  { name: 'estado', align: 'center', label: 'Estado', field: 'estado', sortable: true },
+  { name: 'fecha', label: 'FECHA', field: 'fecha', align: 'center', sortable: true },
+  { name: 'IdAprendiz', align: 'center', label: 'NOMBRE', field: row => row?.IdAprendis?.nombre, sortable: true },
+  { name: 'IdAprendiz', align: 'center', label: 'TELEFONO', field: row => row?.IdAprendis?.telefono, sortable: true },
+  { name: 'IdAprendiz', align: 'center', label: 'EMAIL', field: row => row?.IdAprendis?.email, sortable: true },
+  { name: 'IdAprendiz', align: 'center', label: 'DOCUMENTO', field: row => row?.IdAprendis?.cc, sortable: true },
+  { name: 'nombreFicha', align: 'center', label: 'NOMBRE FICHA', field: row => row?.IdAprendis?.IdFicha?.nombre, sortable: true },
+  { name: 'codigoFicha', align: 'center', label: 'CODIGO FICHA', field: row => row?.IdAprendis?.IdFicha?.codigo, sortable: true },
+  { name: 'estado', align: 'center', label: 'ESTADO', field: 'estado', sortable: true },
 ]);
 
 
-function Salir() {
-  router.push({ name: 'menu' });
+function abrirModal1() {
+  mostrarModal1.value = true; // Abre el modal
+}
+
+function abrirModal2() {
+  mostrarModal2.value = true; // Abre el modal
+}
+
+function abrirModal3() {
+  mostrarModal3.value = true; // Abre el modal
+}
+
+function abrirModal4() {
+  mostrarModal4.value = true; // Abre el modal
+}
+
+function cerrarModal() {
+  mostrarModal.value = false; // Cierra el modal
+}
+
+const Salir = async () => {
+  router.replace("/home")
 }
 
 function cerrar() {
   fixed.value = false;
 }
-
 </script>
 
 
@@ -375,31 +474,111 @@ function cerrar() {
   flex-grow: 1;
 }
 
+  
 #atras {
-  width: 35px;
-  height: 35px;
+  width: 40px; /* Aumenté el tamaño para mejorar la clicabilidad */
+  height: 40px; /* Aumenté el tamaño para mejorar la clicabilidad */
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
+  border: none;
   background-color: rgb(8, 73, 55);
   color: white;
-  margin-left: 25px;
-  margin-top: 10px;
+  margin-left: 5%;
+  margin-top: 0%;
+  cursor: pointer; /* Asegura que se vea como un botón clickeable */
 }
 
-hr {
-  width: 80%;
-  border: 2px solid #2F7D32;
-  margin: -20px auto 0;
+#atras:focus {
+  outline: none; /* Elimina el borde de enfoque */
 }
+
+ hr {
+    width: 90%;
+    border: 2px solid #2F7D32;
+    margin: -20px auto 0;
+    margin-bottom: 20px;
+    margin-top: 5PX;
+  }
 
 .tablafichas {
-  width: 80%;
+  width: 90%;
   margin: 0 auto;
+  margin-bottom: 150px;
 }
 
 #agregarficha {
-  margin: 30px auto 20px;
+  background-color: #2F7D32 !important;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+#agregarficha .material-symbols-outlined {
+  font-size: 19px;
+  margin-right: 5px;
+}
+
+.btnsB{
+  width: 90%;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 20px;
+}
+
+.modal-card {
+  max-width: 400px;
+  width: 100%;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  background-color: #f8f9fa;
+}
+
+
+
+.modal-header {
+  background-color: #2F7D32;
+  color: white;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  padding: 16px;
+  font-weight: bold !important;
+  font-size: 18px;
+  text-align: center;
+}
+
+.modal-body {
+  padding: 35px;
+}
+
+.modal-footer {
+  padding: 16px;
+  background-color: #f1f1f1;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+}
+
+#lista {
+  background-color: #2F7D32 !important;
+  font-size: 13px;
+  font-weight: bold;
+  color: white !important;
+}
+
+#cierra {
+  color: black !important;
+  border: 1px black;
+}
+
+#btnlist{
+  background-color: #2F7D32 !important;
+  font-size: 13px;
+  font-weight: bold;
+  color: white;
+  border-radius: 3px;
+  border: 0px;
+  height: 34px;
+  width: 140px;
 }
 </style>
