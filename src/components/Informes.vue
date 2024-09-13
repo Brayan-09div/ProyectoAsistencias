@@ -33,9 +33,9 @@
 
     <div class="tablafichas">
       <div class="btns">
-      <q-btn id="agregarficha" @click="fixed = true" color="primary">
-        <span class="material-symbols-outlined">add_circle</span>Crear
-      </q-btn>
+        <router-link to="/pdf">
+        <q-btn color="green" label="Crear PDF" icon="picture_as_pdf" push class="q-my-md" />
+      </router-link>
       <button id="btnlist" @click="abrirModal()">LISTAR FECHA</button>
     </div>
       <q-table :rows="rows" :columns="columns" row-key="_id">
@@ -117,18 +117,13 @@ const useFicha = useFichaStore();
 const router = useRouter();
 const $q = useQuasar();
 
-  
-let fichas = ref([]);
-let options = ref(fichas.value);
+let fichas = ref([]);  // Declaración única
+let options = ref(fichas.value);  // Declaración única que depende de fichas
 const mostrarModal = ref(false); // Estado del modal
-  
 
 let fecha = ref("");
 let IdFicha = ref("");
-let fichas = ref([]);
-let options = ref(fichas.value);
 
-watch(isDark, val => Dark.set(val));
 
 onBeforeMount(() => {
   traer();
@@ -173,53 +168,39 @@ async function listarBitacorasFichaFecha() {
     bitacora.fecha = `${dia}/${mes}/${año}`;
     return bitacora;
   });
+  cerrarModal()
 }
-
 
 function cambiarEstado(id, nuevoEstado) {
   useBitacora.actulizarEstado(id, nuevoEstado)
     .then(() => {
-      const bitacora = rows.value.find(row => row._id === id);
-      if (bitacora) {
-        bitacora.estado = nuevoEstado;
-      }
+      $q.notify({
+        type: 'positive',
+        message: 'Estado actualizado correctamente.'
+      });
+      traer();
     })
     .catch(error => {
       console.error('Error al cambiar estado:', error);
-    });
-    mostrarModal.value = false;
-  }
-  
-  function cambiarEstado(id, nuevoEstado) {
-    useBitacora.actulizarEstado(id, nuevoEstado)
-      .then(() => {
-        $q.notify({
-          type: 'positive',
-          message: 'Estado actualizado correctamente.'
-        });
-        traer();
-      })
-      .catch(error => {
-        console.error('Error al cambiar estado:', error);
-        $q.notify({
-          type: 'negative',
-          message: 'Error al cambiar estado.'
-        });
+      $q.notify({
+        type: 'negative',
+        message: 'Error al cambiar estado.'
       });
-  }
-  const columns = ref([
-    { name: 'fecha', label: 'FECHA', field: 'fecha', align: 'center', sortable: true },
-    { name: 'IdAprendiz', align: 'center', label: 'NOMBRE', field: row => row?.IdAprendis?.nombre, sortable: true },
-    { name: 'IdAprendiz', align: 'center', label: 'TELEFONO', field: row => row?.IdAprendis?.telefono, sortable: true },
-    { name: 'IdAprendiz', align: 'center', label: 'EMAIL', field: row => row?.IdAprendis?.email, sortable: true },
-    { name: 'IdAprendiz', align: 'center', label: 'DOCUMENTO', field: row => row?.IdAprendis?.cc, sortable: true },
-    { name: 'nombreFicha', align: 'center', label: 'NOMBRE FICHA', field: row => row?.IdAprendis?.IdFicha?.nombre, sortable: true },
-    { name: 'codigoFicha', align: 'center', label: 'CODIGO FICHA', field: row => row?.IdAprendis?.IdFicha?.codigo, sortable: true },
-    { name: 'estado', align: 'center', label: 'ESTADO', field: 'estado', sortable: true },
-  ]);
-  
-  
-  function abrirModal() {
+    });
+}
+
+const columns = ref([
+  { name: 'fecha', label: 'FECHA', field: 'fecha', align: 'center', sortable: true },
+  { name: 'IdAprendiz', align: 'center', label: 'NOMBRE', field: row => row?.IdAprendis?.nombre, sortable: true },
+  { name: 'IdAprendiz', align: 'center', label: 'TELEFONO', field: row => row?.IdAprendis?.telefono, sortable: true },
+  { name: 'IdAprendiz', align: 'center', label: 'EMAIL', field: row => row?.IdAprendis?.email, sortable: true },
+  { name: 'IdAprendiz', align: 'center', label: 'DOCUMENTO', field: row => row?.IdAprendis?.cc, sortable: true },
+  { name: 'nombreFicha', align: 'center', label: 'NOMBRE FICHA', field: row => row?.IdAprendis?.IdFicha?.nombre, sortable: true },
+  { name: 'codigoFicha', align: 'center', label: 'CODIGO FICHA', field: row => row?.IdAprendis?.IdFicha?.codigo, sortable: true },
+  { name: 'estado', align: 'center', label: 'ESTADO', field: 'estado', sortable: true },
+]);
+
+function abrirModal() {
   mostrarModal.value = true; // Abre el modal
 }
 
@@ -228,15 +209,13 @@ function cerrarModal() {
 }
 
 const Salir = async () => {
-  router.replace("/home")
+  router.replace("/home");
 }
 
 function cerrar() {
   fixed.value = false;
 }
-  
-  </script>
-  
+</script>
   
   <style scoped>
   #en {
