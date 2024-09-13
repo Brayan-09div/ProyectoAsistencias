@@ -2,9 +2,11 @@ import { defineStore } from "pinia";
 import axios from "axios";
 import { Notify } from "quasar";
 import { useUsuariosStore } from "../stores/usuarios.js";
+import { ref } from "vue";
 
 export const useBitacoraStore = defineStore("bitacora", () => {
   const useUsuarios = useUsuariosStore();
+  let bitacoras = ref({})
 
   const crearBitacora = async (cc) => {
     try {
@@ -114,7 +116,10 @@ export const useBitacoraStore = defineStore("bitacora", () => {
           "x-token": useUsuarios.xtoken,
         },
       });
-      console.log(r);
+      bitacoras.value.data=r.data;
+      bitacoras.value.fecha = fecha;
+      bitacoras.value.IdFicha = IdFicha;
+      console.log(bitacoras);
       return r.data;
     } catch (error) {
       console.log(error);
@@ -122,41 +127,14 @@ export const useBitacoraStore = defineStore("bitacora", () => {
     }
   };
 
-  const actulizarEstado = async (id, estado) => {
-    try {
-      let r = await axios.put(
-        `/Bitacoras/ActualizarEstado/${id}`,
-        { estado },
-        {
-          headers: {
-            "x-token": useUsuarios.xtoken,
-          },
-        }
-      );
-      console.log(r);
-      Notify.create({
-        type: "positive",
-        message: "Bitácora actualizada correctamente",
-      });
-      return r.data;
-    } catch (error) {
-      console.log(error);
-      Notify.create({
-        type: "negative",
-        message: "Hubo un error al actualizar la bitácora",
-      });
-    }
-  };
-
-
   return {
     crearBitacora,
     listarBitacoras,
-    actulizarEstado,
     listarBitacorasFecha,
     listarBitacorasFicha,
     listarBitacorasAprendiz,
     listarBitacorasFechaUnica,
     listarBitacoraFechaFicha,
+    bitacoras,
   };
 });

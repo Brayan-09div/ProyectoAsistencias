@@ -6,53 +6,108 @@
     <div class="profile-container">
       <div class="profile-card">
         <div class="profile-avatar">
-          <img :src="user.photo" alt="User Avatar" />
+          <img :src="photo" alt="User Avatar" />
         </div>
-        <h2 class="profile-name">{{ user.name }}</h2>
-        <p class="profile-title">{{ user.role }}</p>
+        <h2 class="profile-name">{{ useUsuarios.usuarios.usuario.nombre }}</h2>
+        <p class="profile-title">{{ useUsuarios.usuarios.usuario.email }}</p>
         <div class="profile-info">
-          <p><i class="fas fa-envelope"></i> {{ user.email }}</p>
-          <p><i class="fas fa-lock"></i> {{ encryptedPassword }}</p>
+          <p><i class="fas fa-envelope"></i> {{ useUsuarios.usuarios.usuario.roles[0] }}</p>
+          <button @click="fixed = true">Cambiar Contraseña</button>
         </div>
-        <a href="#" @click.prevent="resetPassword" class="reset-link">
-          ¿Olvidaste tu contraseña?
-        </a>
+      </div>
+
+      <div>
+        <q-dialog v-model="fixed" :backdrop-filter="'blur(4px) saturate(150%)'" transition-show="rotate"
+                  transition-hide="rotate" persistent>
+          <q-card>
+            <q-card-section>
+              <div class="text-h6">Cambiar Contraseña</div>
+            </q-card-section>
+
+            <q-separator />
+
+            <q-card-section style="max-height: 50vh" class="scroll">
+              <q-input type="password" filled v-model="contraseñavieja" label="Contraseña antigua" :dense="dense" :error="contraseñaviejaError"
+                       error-message="La contraseña antigua es requerida" />
+              <q-input type="password" filled v-model="password" label="Nueva contraseña" :dense="dense" :error="contraseñanuevaError"
+                       error-message="La nueva contraseña es requerida" />
+            </q-card-section>
+
+            <q-separator />
+
+            <q-card-actions align="right">
+              <q-btn flat label="Cerrar" color="primary" v-close-popup @click="cerrar" />
+              <q-btn flat label="Cambiar Contraseña" color="primary" @click="restablecerContraseña" />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useUsuariosStore } from '../stores/usuarios.js';
+import { Notify } from 'quasar';
 
-const user = ref({
-  name: 'John Doe', 
-  role: 'Instructor', 
-  email: 'john.doe@example.com',
-  password: '12345678', 
-  photo: 'https://via.placeholder.com/100'
-})
+const useUsuarios = useUsuariosStore();
 
-const encryptedPassword = ref('')
+let fixed = ref(false);
 
-function encryptPassword(password) {
-  return btoa(password)
+let contraseñavieja = ref('');
+let password = ref('');
+
+let contraseñaviejaError = ref(false);
+let contraseñanuevaError = ref(false);
+
+
+  let photo = 'https://via.placeholder.com/100'
+
+
+async function restablecerContraseña() {
+  contraseñaviejaError.value = !contraseñavieja.value;
+  contraseñanuevaError.value = !password.value;
+
+  if (contraseñaviejaError.value || contraseñanuevaError.value) {
+    return;
+  }
+
+  try {
+    await useUsuarios.cambiarPassword(useUsuarios.usuarios.usuario._id, contraseñavieja.value, password.value);
+    Notify.create({
+      color: 'positive',
+      message: 'Contraseña cambiada con éxito.',
+      icon: 'check_circle',
+      timeout: 2500,
+    });
+    // Vaciar campos después de cambiar la contraseña
+    contraseñavieja.value = '';
+    password.value = '';
+    contraseñaviejaError.value = false;
+    contraseñanuevaError.value = false;
+    fixed.value = false;
+  } catch (error) {
+    Notify.create({
+      color: 'negative',
+      message: 'Error al cambiar la contraseña. Verifica la contraseña antigua.',
+      icon: 'error',
+      timeout: 2500,
+    });
+  }
 }
 
-onMounted(() => {
-  encryptedPassword.value = encryptPassword(user.value.password)
-})
+const router = useRouter();
+const Salir = () => {
+  router.replace('/home');
+};
 
-function resetPassword() {
-  alert('Link de restablecimiento de contraseña enviado a tu correo.')
-}
-
-const router = useRouter()
-const Salir = async () => {
-  router.replace("/home")
-}
+const cerrar = () => {
+  fixed.value = false;
+};
 </script>
+
 
 <style scoped>
 .perfilcompleto {

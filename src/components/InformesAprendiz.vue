@@ -205,7 +205,7 @@ function cambiarEstado(id, nuevoEstado) {
                 type: 'positive',
                 message: 'Estado actualizado correctamente.'
             });
-            traer();
+            listarBitacorasAprendiz();
         })
         .catch(error => {
             console.error('Error al cambiar estado:', error);
