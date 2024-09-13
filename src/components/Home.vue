@@ -39,6 +39,10 @@
                 <q-item-section>APRENDICES</q-item-section>
               </q-item>
 
+              <q-item clickable to="/fichas" v-ripple class="menu-button">
+                <q-item-section>FICHAS</q-item-section>
+              </q-item>
+
               <q-item clickable to="/bitacoras" v-ripple class="menu-button">
                 <q-item-section>BITACORAS</q-item-section>
               </q-item>
@@ -51,9 +55,6 @@
                 <q-item-section>INFORMES</q-item-section>
               </q-item>
 
-              <q-item clickable to="/fichas" v-ripple class="menu-button">
-                <q-item-section>FICHAS</q-item-section>
-              </q-item>
             </q-list>
           </q-scroll-area>
         </q-drawer>
@@ -107,7 +108,30 @@
               <q-btn id="Ver" color="primary" clickable to="/fichas" v-ripple>Ver</q-btn>
             </q-card-section>
           </q-card>
+          <q-card class="my-card">
+            <q-img
+              src="https://images.pexels.com/photos/7109288/pexels-photo-7109288.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2">
+              <div class="text-subtitle2 absolute-top text-center" style="font-weight: bold; font-size: 15px;">
+                INFORMES APRENDIZ
+              </div>
+            </q-img>
+            <q-card-section>
+              <q-btn id="Ver" color="primary" clickable to="/informesAprendiz" v-ripple>Ver</q-btn>
+            </q-card-section>
+          </q-card>
+          <q-card class="my-card">
+            <q-img
+              src="https://images.pexels.com/photos/9034989/pexels-photo-9034989.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2">
+              <div class="text-subtitle2 absolute-top text-center" style="font-weight: bold; font-size: 15px;">
+                INFORMES
+              </div>
+            </q-img>
+            <q-card-section>
+              <q-btn id="Ver" color="primary" clickable to="/informes" v-ripple>Ver</q-btn>
+            </q-card-section>
+          </q-card>
         </div>
+        
 
         <hr v-if="isHome">
 
@@ -202,11 +226,11 @@ hr {
 }
 
 .cards {
-  width: 70%;
+  width: 80%;
   margin: 0 auto;
   margin-bottom: 120px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 15px;
   margin-top: 20px;
   justify-content: center;

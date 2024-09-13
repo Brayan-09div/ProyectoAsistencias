@@ -9,7 +9,10 @@
     <hr>
     <div style="margin: 0px;">
       <div class="tablafichas">
-        <div style="margin-top: 0px;">
+        <div v-if="loadingTable" class="spinner-container">
+          <q-spinner color="green" size="50px" />
+        </div>
+        <div v-else>
           <q-btn
             id="agregarficha"
             @click="fixed = true"
@@ -19,7 +22,7 @@
             <q-spinner v-if="loadingAgregar" color="white" size="20px" />
             <span v-else class="material-symbols-outlined">add_circle</span>Crear
           </q-btn>
-        </div>
+
         <q-table :rows="rows" :columns="columns" row-key="codigo">
           <template class="tabla" v-slot:body-cell-opciones="props">
             <q-td :props="props">
@@ -33,7 +36,9 @@
                 <span v-else class="material-symbols-outlined">edit</span>
               </q-btn>
             </q-td>
+            
           </template>
+          
           <template v-slot:header-cell="props">
             <q-th :props="props" :style="{ fontWeight: 'bold', color: 'black', fontSize: '16px' }">
               {{ props.col.label }}
@@ -91,6 +96,7 @@
       </div>
     </div>
   </div>
+  </div>
 </template>
 
 <script setup>
@@ -123,13 +129,25 @@ const loadingEdit = ref(false);
 const loadingGuardar = ref(false);
 const loadingStates = ref({});
 
+const loadingTable = ref(true);  // Nueva variable de estado para la tabla
+
 onBeforeMount(() => {
   traer();
 });
 
 async function traer() {
-  let res = await useFicha.listarFichas();
-  rows.value = res.data;
+  if (!Object.values(loadingStates.value).includes(true)) {
+    loadingTable.value = true;  // Mostrar spinner solo si no hay otros botones en carga
+  }
+
+  try {
+    let res = await useFicha.listarFichas();
+    rows.value = res.data;
+  } catch (error) {
+    console.error("Error al cargar los datos:", error);
+  } finally {
+    loadingTable.value = false;  // Ocultar spinner cuando los datos se hayan cargado
+  }
 }
 
 function traerDatos(datos) {
@@ -151,10 +169,15 @@ function cerar() {
 }
 
 async function activar(id, row) {
-  loadingStates.value[id] = true;
-  let res = await useFicha.activarDesactivarFichas(id);
-  await traer();
-  loadingStates.value[id] = false;
+  loadingStates.value[id] = true;  // Activar el spinner solo para el botón correspondiente
+  try {
+    await useFicha.activarDesactivarFichas(id);  // Cambiar el estado de la ficha
+    await traer();  // Actualizar la tabla
+  } catch (error) {
+    console.error("Error al cambiar el estado:", error);
+  } finally {
+    loadingStates.value[id] = false;  // Desactivar el spinner solo para el botón correspondiente
+  }
 }
 
 async function crearFicha() {
@@ -327,5 +350,12 @@ hr {
   margin: 5px;
   width: 37px;
   color: white;
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px; /* Ajusta el tamaño según lo necesario */
 }
 </style>

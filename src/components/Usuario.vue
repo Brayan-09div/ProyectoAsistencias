@@ -9,7 +9,10 @@
     <hr>
     <div style="margin: 0px;">
       <div class="tablafichas">
-        <div style="margin-top: 0px;">
+        <div v-if="loadingTable" class="spinner-container">
+          <q-spinner color="green" size="50px" />
+        </div>
+        <div v-else>
           <q-btn
             id="agregarficha"
             @click="fixed = true"
@@ -19,16 +22,17 @@
             <q-spinner v-if="loadingAgregar" color="white" size="20px" />
             <span v-else class="material-symbols-outlined">add_circle</span>Crear
           </q-btn>
-        </div>
-        <q-table :rows="rows" :columns="columns" row-key="codigo">
-          <template class="tabla" v-slot:body-cell-opciones="props">
-            <q-td :props="props">
-              <q-btn
-                id="edit"
-                @click="traerDatos(props.row)"
-                color="primary"
-                :loading="loadingEdit"
-              >
+          <!-- Asegúrate de que la tabla esté dentro del contenedor adecuado para la visibilidad -->
+          <div class="table-container">
+            <q-table :rows="rows" :columns="columns" row-key="codigo">
+              <template class="tabla" v-slot:body-cell-opciones="props">
+                <q-td :props="props">
+                  <q-btn
+                    id="edit"
+                    @click="traerDatos(props.row)"
+                    color="primary"
+                    :loading="loadingEdit"
+                  >
                 <q-spinner v-if="loadingEdit" color="white" size="20px" />
                 <span v-else class="material-symbols-outlined">edit</span>
               </q-btn>
@@ -52,7 +56,8 @@
             </q-td>
           </template>
         </q-table>
-        
+      </div>
+    </div>
         <!-- Modal de Crear/Editar Usuario -->
         <q-dialog v-model="fixed" :backdrop-filter="'blur(4px) saturate(150%)'" transition-show="rotate" transition-hide="rotate" persistent>
           <q-card class="modal-card">
@@ -149,6 +154,8 @@ const loadingEdit = ref(false);
 const loadingGuardar = ref(false);
 const loadingStates = ref({});
 
+const loadingTable = ref(true);  // Nueva variable de estado para la tabla
+
 onBeforeMount(() => {
   traer();
 });
@@ -159,9 +166,21 @@ function ides(ids) {
 }
 
 async function traer() {
-  let res = await useUsuarios.listarUsuarios();
-  rows.value = res.data;
+  // Mostrar spinner global si no hay otros botones en carga
+  if (!Object.values(loadingStates.value).includes(true) && !loadingAgregar.value && !loadingEdit.value && !loadingGuardar.value) {
+    loadingTable.value = true;
+  }
+
+  try {
+    let res = await useUsuarios.listarUsuarios();
+    rows.value = res.data;
+  } catch (error) {
+    console.error("Error al cargar los datos:", error);
+  } finally {
+    loadingTable.value = false;  // Ocultar spinner cuando los datos se hayan cargado
+  }
 }
+
 
 function traerDatos(datos) {
   id.value = datos._id;
@@ -181,11 +200,21 @@ function cerrar() {
   emailError.value = false;
 }
 
-async function activar(id) {
-  loadingStates.value[id] = true;
-  let res = await useUsuarios.activarDesactivarUsuario(id);
-  await traer();
-  loadingStates.value[id] = false;
+async function activar(id, row) {
+  loadingStates.value[id] = true;  // Activar el spinner solo para el botón correspondiente
+
+  try {
+    await useUsuarios.activarDesactivarUsuario(id);  // Cambiar el estado del usuario
+    // Actualizar la tabla
+    const index = rows.value.findIndex(user => user._id === id);
+    if (index !== -1) {
+      rows.value[index].estado = row.estado === 1 ? 0 : 1; // Alternar el estado
+    }
+  } catch (error) {
+    console.error("Error al cambiar el estado:", error);
+  } finally {
+    loadingStates.value[id] = false;  // Desactivar el spinner solo para el botón correspondiente
+  }
 }
 
 async function crearUsuario() {
@@ -349,5 +378,12 @@ hr {
   margin: 5px;
   width: 37px;
   color: white;
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px; /* Ajusta el tamaño según lo necesario */
 }
 </style>
