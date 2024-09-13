@@ -5,40 +5,14 @@
         <span class="material-symbols-outlined">arrow_back</span>
       </button>
       <h1 id="programas">Bitacoras</h1>
-      <q-input v-model="fechaInicio" filled type="date" hint="Native date" />
+
+    </div>
+    <q-input v-model="fechaInicio" filled type="date" hint="Native date" />
       <q-input v-model="fechaFin" filled type="date" hint="Native date" />
       <button @click="listarFechas()">listar Fechas</button>
-    </div>
-    <div>
-      <q-select rounded outlined v-model="IdFicha" use-input hide-selected fill-input input-debounce="0"
-                :options="options" @filter="filterFichas" label="Selecciona una ficha">
-                <template v-slot:no-option>
-                  <q-item>
-                    <q-item-section class="text-grey">
-                      Sin resultados
-                    </q-item-section>
-                  </q-item>
-                </template>
-              </q-select>
-      <button @click="listarBitacorasFicha()">listar Ficha</button>
-    </div>
 
     <div>
-      <q-select rounded outlined v-model="idAprendis" use-input hide-selected fill-input input-debounce="0"
-                :options="optionsAprendiz" @filter="filterAprendiz" label="Selecciona un aprendiz">
-                <template v-slot:no-option>
-                  <q-item>
-                    <q-item-section class="text-grey">
-                      Sin resultados
-                    </q-item-section>
-                  </q-item>
-                </template>
-              </q-select>
-      <button @click="listarBitacorasAprendiz()">listar Aprendiz</button>
-    </div>
-    <div>
-      <q-input v-model="fecha" filled type="date" hint="Native date" />
-      <button @click="listarFecha()">listar Fecha</button>
+ 
     </div>
     <div style="margin: 0px;">
       <div class="tablafichas">

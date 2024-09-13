@@ -25,7 +25,12 @@
           </template>
           <template v-slot:body-cell-estado="props">
             <q-td :props="props">
-              <q-btn @click="activar(props.row._id)" :color="props.row.estado == 1 ? 'green' : 'red'">
+              <q-btn
+                @click="activar(props.row._id, props.row)"
+                :color="props.row.estado == 1 ? 'green' : 'red'"
+                :loading="loadingStates[props.row._id]"
+              >
+                <q-spinner v-if="loadingStates[props.row._id]" color="white" size="20px" />
                 {{ props.row.estado == 1 ? 'Activo' : 'Inactivo' }}
               </q-btn>
             </q-td>
@@ -166,10 +171,21 @@
       telefonoError.value = false;
   }
   
-  async function activar(id) {
-      await useAprendiz.activarDesactivarAprendiz(id);
-      await traer();
+  let loadingStates = ref({});
+
+async function activar(id) {
+  // Iniciar el estado de carga para el aprendiz con el ID correspondiente
+  loadingStates.value[id] = true;
+
+  try {
+    await useAprendiz.activarDesactivarAprendiz(id);
+    await traer();
+  } catch (error) {
+    console.error("Error al activar/desactivar aprendiz:", error);
+  } finally {
+    loadingStates.value[id] = false;
   }
+}
   
   async function crearAprendiz() {
 
