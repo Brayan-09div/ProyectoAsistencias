@@ -18,7 +18,7 @@
         <q-drawer v-model="leftDrawerOpen" :width="250" side="left" overlay behavior="mobile" class="bg-black"
           style="background-color: white !important;">
           <router-link to="/perfil" class="text-weight-bold">
-            <q-img class="absolute-top" src="https://images.pexels.com/photos/220326/pexels-photo-220326.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" style="height: 150px">
+            <q-img class="absolute-top" src="https://caracol.com.co/resizer/v2/KWOY6HLXGJDY7FINVWKHW4BZH4.jpg?auth=1cb703fcb1fe937ca055451ec405ad84789073f23e256b7fba7bf44f1622b06e&width=650&height=488&quality=70&smart=true" style="height: 150px">
               <div class="absolute-bottom bg-transparent">
                 <q-avatar size="70px" class="q-mb-sm">
                   <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWoms2HEy0ELPrZGRr001PN2sh5sq9dU_BWQ&s">

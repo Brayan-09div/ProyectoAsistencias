@@ -8,13 +8,13 @@
             <th class="logo-cell">
               <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWoms2HEy0ELPrZGRr001PN2sh5sq9dU_BWQ&s" alt="Logo" class="logo"/>
             </th>
-            <th style="font-weight: bold;" colspan="10" class="header-text">
+            <th colspan="10" class="header-text">
               REGISTRO DE ASISTENCIA Y APROBACIÓN DEL ACTA No-
             </th>
           </tr>
           <tr>
-            <th style="font-weight: bold;"  colspan="5">fecha : {{ bitacoras.fecha }}</th>
-            <th style="font-weight: bold;"  colspan="7">nombre : {{ bitacoras.data[0].IdAprendis.IdFicha.nombre }}</th>
+            <th colspan="5" class="header-details">Fecha: {{ bitacoras.fecha }}</th>
+            <th colspan="7" class="header-details">Nombre: {{ bitacoras.data[0].IdAprendis.IdFicha.nombre }}</th>
           </tr>
         </thead>
       </table>
@@ -25,17 +25,17 @@
       <table class="data-table">
         <thead>
           <tr>
-            <th style="text-align: center;">No.</th>
-            <th style="text-align: center;">NOMBRES Y APELLIDOS</th>
-            <th style="text-align: center;">No. DOCUMENTO</th>
-            <th style="text-align: center;">PLANTA</th>
-            <th style="text-align: center;">CONTRATISTA/EMPRESA</th>
-            <th style="text-align: center;">OTRO</th>
-            <th style="text-align: center;">DEPENDENCIA</th>
-            <th style="text-align: center;">CORREO ELECTRÓNICO</th>
-            <th style="text-align: center;">TELEFONO/EXT.SENA</th>
-            <th style="text-align: center;">AUTORIZA GRABACIÓN</th>
-            <th style="text-align: center;">FIRMA O PARTICIPACIÓN VIRTUAL</th>
+            <th>No.</th>
+            <th>NOMBRES Y APELLIDOS</th>
+            <th>No. DOCUMENTO</th>
+            <th>PLANTA</th>
+            <th>CONTRATISTA/EMPRESA</th>
+            <th>OTRO</th>
+            <th>DEPENDENCIA</th>
+            <th>CORREO ELECTRÓNICO</th>
+            <th>TELEFONO/EXT.SENA</th>
+            <th>AUTORIZA GRABACIÓN</th>
+            <th>FIRMA O PARTICIPACIÓN VIRTUAL</th>
           </tr>
         </thead>
         <tbody>
@@ -50,7 +50,17 @@
             <td>{{ bitacora.IdAprendis.email }}</td>
             <td>{{ bitacora.IdAprendis.telefono }}</td>
             <td>{{ bitacora.autorizaGrabacion }}</td>
-            <td>{{ bitacora.firmaParticipacionVirtual }}</td>
+            <td class="firma-cell">
+              <div v-if="bitacora.IdAprendis.firmaVirtual" class="firma-container">
+                <img 
+                  :src="bitacora.IdAprendis.firmaVirtual" 
+                  alt="Firma Virtual" 
+                  class="firma-virtual"
+                  @error="handleImageError"
+                />
+              </div>
+              <span v-else class="no-firma">No disponible</span>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -59,16 +69,37 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useBitacoraStore } from '../stores/bitacoras.js'; 
+import { ref, onMounted } from 'vue';
+import { useBitacoraStore } from '../stores/bitacoras.js';
 import { useFichaStore } from '../stores/fichas.js';
+import { useAprendizStore } from '../stores/aprendiz.js';
 
 const useFicha = useFichaStore();
+const useBitacoras = useBitacoraStore();
+const useAprendiz = useAprendizStore();
+
 const props = defineProps(['fecha']);
 const fecha = ref(props.fecha);
 
-const useBitacoras = useBitacoraStore();
-const bitacoras = useBitacoras.bitacoras; 
+const bitacoras = ref(useBitacoras.bitacoras);
+
+onMounted(async () => {
+  // Actualizar las firmas virtuales
+  for (const bitacora of bitacoras.value.data) {
+    try {
+      const response = await useAprendiz.updatecoul(bitacora.IdAprendis._id);
+      if (response.data && response.data.firmaVirtual) {
+        bitacora.IdAprendis.firmaVirtual = response.data.firmaVirtual;
+      }
+    } catch (error) {
+      console.error('Error al obtener la firma virtual:', error);
+    }
+  }
+});
+
+const handleImageError = (event) => {
+  event.target.src = 'https://via.placeholder.com/100x50?text=Sin+Firma'; // URL de imagen por defecto
+};
 </script>
 
 <style scoped>
@@ -113,6 +144,11 @@ const bitacoras = useBitacoras.bitacoras;
   font-size: 14px;
 }
 
+.header-details {
+  font-weight: bold;
+  font-size: 14px;
+}
+
 .table-wrapper {
   width: 100%;
 }
@@ -126,7 +162,7 @@ const bitacoras = useBitacoras.bitacoras;
 .data-table th, .data-table td {
   border: 1px solid #ddd;
   padding: 8px;
-  text-align: left;
+  text-align: center; /* Centrar el texto */
 }
 
 .data-table th {
@@ -141,6 +177,30 @@ const bitacoras = useBitacoras.bitacoras;
 
 .data-table tr:hover {
   background-color: #f1f1f1;
+}
+
+.firma-cell {
+  width: 120px; /* Establece un ancho fijo para la columna de firma */
+}
+
+.firma-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px; /* Altura fija para la firma */
+}
+
+.firma-virtual {
+  max-width: 100px; /* Ancho máximo para las firmas */
+  max-height: 50px; /* Altura máxima para las firmas */
+  object-fit: contain; /* Mantener la proporción de la imagen */
+  border: 1px solid #ccc; /* Borde opcional para mejor visualización */
+  border-radius: 4px; /* Bordes redondeados */
+}
+
+.no-firma {
+  font-size: 12px;
+  color: #777;
 }
 
 @media (max-width: 1200px) {
@@ -179,6 +239,14 @@ const bitacoras = useBitacoras.bitacoras;
   .table-container {
     padding: 10px;
   }
+  
+  .firma-cell {
+    width: 80px; /* Ajustar el ancho en pantallas pequeñas */
+  }
+
+  .firma-virtual {
+    max-width: 60px; /* Reducir el tamaño de la firma en pantallas pequeñas */
+    max-height: 30px;
+  }
 }
 </style>
-

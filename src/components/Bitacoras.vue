@@ -400,23 +400,14 @@ async function crearBitacora() {
   }
 }
 
-function cambiarEstado(id, nuevoEstado) {
-  useBitacora.actulizarEstado(id, nuevoEstado)
-    .then(() => {
-      $q.notify({
-        type: 'positive',
-        message: 'Estado actualizado correctamente.'
-      });
-      traer();
-    })
-    .catch(error => {
-      console.error('Error al cambiar estado:', error);
-      $q.notify({
-        type: 'negative',
-        message: 'Error al cambiar estado.'
-      });
-    });
+async function cambiarEstado(id, nuevoEstado) {
+  try {
+    await useBitacora.cambiaEstado(id, nuevoEstado);
+  } catch (error) {
+    console.error('Error al actualizar estado:', error);
+  }
 }
+
 const columns = ref([
   { name: 'fecha', label: 'FECHA', field: 'fecha', align: 'center', sortable: true },
   { name: 'IdAprendiz', align: 'center', label: 'NOMBRE', field: row => row?.IdAprendis?.nombre, sortable: true },

@@ -199,20 +199,13 @@ async function listarBitacorasAprendiz() {
 
 
 function cambiarEstado(id, nuevoEstado) {
-    useBitacora.actulizarEstado(id, nuevoEstado)
+    useBitacora.cambiaEstado(id, nuevoEstado)
         .then(() => {
-            $q.notify({
-                type: 'positive',
-                message: 'Estado actualizado correctamente.'
-            });
             listarBitacorasAprendiz();
         })
         .catch(error => {
             console.error('Error al cambiar estado:', error);
-            $q.notify({
-                type: 'negative',
-                message: 'Error al cambiar estado.'
-            });
+     
         });
 }
 const columns = ref([

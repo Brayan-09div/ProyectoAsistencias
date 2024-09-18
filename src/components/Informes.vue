@@ -15,7 +15,7 @@
         <div class="modal-body1">
           <div class="filtroFichas">
             <q-select rounded outlined v-model="IdFicha" use-input hide-selected fill-input input-debounce="0"
-                      :options="options" @filter="filterFichas" label="Selecciona una ficha" />
+              :options="options" @filter="filterFichas" label="Selecciona una ficha" />
           </div>
           <div class="fecha1">
             <q-input v-model="fecha" filled type="date" />
@@ -27,9 +27,9 @@
             <q-btn id="cierra" flat label="Cerrar" color="primary" v-close-popup @click="cerrarModal" />
             <q-btn id="lista" flat label="Listar" color="primary" @click="listarBitacorasFichaFecha" />
             <template v-slot:append>
-            <!-- Spinner para el botón Listar -->
-            <q-spinner v-if="loadingListar" color="white" size="20px" />
-          </template>
+              <!-- Spinner para el botón Listar -->
+              <q-spinner v-if="loadingListar" color="white" size="20px" />
+            </template>
           </q-card-actions>
         </div>
       </q-card>
@@ -44,19 +44,15 @@
       <!-- Mostrar la tabla solo cuando loadingTable es false -->
       <div v-else>
         <div class="btns">
-          <router-link to="/pdf">
-            <q-btn id="btnlist1" color="green" label="Crear PDF" icon="picture_as_pdf" push class="q-my-md" />
-          </router-link>
+          <q-btn id="btnlist1" color="green" label="Crear PDF" icon="picture_as_pdf" push class="q-my-md"
+            :disabled="!datosListados" @click="crearPDF" />
           <button id="btnlist" @click="abrirModal()">FILTROS</button>
         </div>
         <q-table :rows="rows" :columns="columns" row-key="_id">
           <template v-slot:body-cell-estado="props">
             <q-td :props="props">
-              <q-select
-                v-model="props.row.estado"
-                :options="['pendiente', 'asistió', 'faltó', 'excusa']"
-                @update:model-value="cambiarEstado(props.row._id, props.row.estado)"
-              />
+              <q-select v-model="props.row.estado" :options="['pendiente', 'asistió', 'faltó', 'excusa']"
+                @update:model-value="cambiarEstado(props.row._id, props.row.estado)" />
             </q-td>
           </template>
           <template v-slot:header-cell="props">
@@ -69,13 +65,8 @@
     </div>
 
     <!-- Dialogo para crear bitácora -->
-    <q-dialog
-      v-model="fixed"
-      :backdrop-filter="'blur(4px) saturate(150%)'"
-      transition-show="rotate"
-      transition-hide="rotate"
-      persistent
-    >
+    <q-dialog v-model="fixed" :backdrop-filter="'blur(4px) saturate(150%)'" transition-show="rotate"
+      transition-hide="rotate" persistent>
       <q-card class="modal-card">
         <div class="modal-header">Crear Bitácora</div>
         <div class="modal-body">
@@ -96,13 +87,8 @@
     </q-dialog>
 
     <!-- Diálogo para confirmar eliminación -->
-    <q-dialog
-      v-model="confirm"
-      persistent
-      :backdrop-filter="'blur(4px) saturate(150%)'"
-      transition-show="rotate"
-      transition-hide="rotate"
-    >
+    <q-dialog v-model="confirm" persistent :backdrop-filter="'blur(4px) saturate(150%)'" transition-show="rotate"
+      transition-hide="rotate">
       <q-card>
         <q-card-section class="row items-center">
           <span class="q-ml-sm">Seguro Quieres Eliminar La Ficha</span>
@@ -138,6 +124,8 @@ let IdFicha = ref("");
 const loadingTable = ref(true);  // Nueva variable de estado para la tabla
 const loadingListar = ref(false); // Estado de carga para el botón Listar
 
+let datosListados = ref(false); //
+
 onBeforeMount(() => {
   traer();
 });
@@ -157,12 +145,12 @@ async function traer() {
   try {
     const res = await useBitacora.listarBitacoras();
     const ris = await useFicha.listarFichas();
-    
+
     fichas.value = ris.data.map(item => ({
       label: item.nombre,
       value: item._id
     }));
-    
+
     rows.value = res.map(bitacora => {
       const fecha = new Date(bitacora.fecha);
       const dia = String(fecha.getDate()).padStart(2, '0');
@@ -195,6 +183,7 @@ async function listarBitacorasFichaFecha() {
       bitacora.fecha = `${dia}/${mes}/${año}`;
       return bitacora;
     });
+    datosListados.value = true; // Marcar datos como listados
   } catch (error) {
     console.error("Error al listar bitácoras:", error);
   } finally {
@@ -204,22 +193,34 @@ async function listarBitacorasFichaFecha() {
 }
 
 function cambiarEstado(id, nuevoEstado) {
-  useBitacora.actulizarEstado(id, nuevoEstado)
+  useBitacora.cambiaEstado(id, nuevoEstado)
     .then(() => {
-      $q.notify({
-        type: 'positive',
-        message: 'Estado actualizado correctamente.'
-      });
-      traer();
+      if (IdFicha.value && fecha.value) {
+        // Si hay filtro por ficha y fecha, volvemos a listar con el filtro
+        listarBitacorasFichaFecha();
+      } else {
+        // Si no hay filtro, cargamos todos los datos
+        traer();
+      }
     })
     .catch(error => {
       console.error('Error al cambiar estado:', error);
-      $q.notify({
-        type: 'negative',
-        message: 'Error al cambiar estado.'
-      });
     });
 }
+
+
+function crearPDF() {
+  if (!datosListados.value) {
+    $q.notify({
+      type: 'warning',
+      message: 'Por favor, liste o filtre las bitácoras por ficha y fecha antes de crear el PDF.'
+    });
+    return;
+  }
+
+  router.push('/pdf');
+}
+
 
 const columns = ref([
   { name: 'fecha', label: 'FECHA', field: 'fecha', align: 'center', sortable: true },
@@ -248,33 +249,35 @@ function cerrar() {
   fixed.value = false;
 }
 </script>
-  
-  <style scoped>
-  #en {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 30px;
-  }
 
-  .filtroFichas{
-    width: 40%;
-  }
+<style scoped>
+#en {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 30px;
+}
 
-  .fecha1{
-    width: 40%;
-  }
-  
-  #programas {
-    font-size: 35px;
-    font-weight: bold;
-    text-align: center;
-    flex-grow: 1;
-  }
-  
-  #atras {
-  width: 40px; /* Aumenté el tamaño para mejorar la clicabilidad */
-  height: 40px; /* Aumenté el tamaño para mejorar la clicabilidad */
+.filtroFichas {
+  width: 40%;
+}
+
+.fecha1 {
+  width: 40%;
+}
+
+#programas {
+  font-size: 35px;
+  font-weight: bold;
+  text-align: center;
+  flex-grow: 1;
+}
+
+#atras {
+  width: 40px;
+  /* Aumenté el tamaño para mejorar la clicabilidad */
+  height: 40px;
+  /* Aumenté el tamaño para mejorar la clicabilidad */
   border-radius: 50%;
   display: flex;
   justify-content: center;
@@ -284,28 +287,30 @@ function cerrar() {
   color: white;
   margin-left: 5%;
   margin-top: 0%;
-  cursor: pointer; /* Asegura que se vea como un botón clickeable */
+  cursor: pointer;
+  /* Asegura que se vea como un botón clickeable */
 }
 
 #atras:focus {
-  outline: none; /* Elimina el borde de enfoque */
+  outline: none;
+  /* Elimina el borde de enfoque */
 }
-  
-  hr {
-    width: 90%;
-    border: 2px solid #2F7D32;
-    margin: -20px auto 0;
-    margin-bottom: 20px;
-    margin-top: 5PX;
-  }
-  
-  .tablafichas {
-    width: 90%;
-    margin: 0 auto;
-    margin-bottom: 100px;
-  }
-  
-  #agregarficha {
+
+hr {
+  width: 90%;
+  border: 2px solid #2F7D32;
+  margin: -20px auto 0;
+  margin-bottom: 20px;
+  margin-top: 5PX;
+}
+
+.tablafichas {
+  width: 90%;
+  margin: 0 auto;
+  margin-bottom: 100px;
+}
+
+#agregarficha {
   background-color: #2F7D32 !important;
   font-size: 13px;
   font-weight: bold;
@@ -316,7 +321,7 @@ function cerrar() {
   margin-right: 5px;
 }
 
-#btnlist{
+#btnlist {
   background-color: #2F7D32 !important;
   font-size: 13px;
   font-weight: bold;
@@ -328,7 +333,7 @@ function cerrar() {
   margin-bottom: 25px;
 }
 
-#btnlist1{
+#btnlist1 {
   background-color: #2F7D32 !important;
   font-size: 13px;
   font-weight: bold;
@@ -341,13 +346,13 @@ function cerrar() {
   margin-top: 0px;
   padding-top: 5px;
 }
-  
-.btns{
+
+.btns {
   display: flex;
   gap: 10px;
 }
 
-.contenido{
+.contenido {
   margin-bottom: 120px
 }
 
@@ -425,12 +430,12 @@ function cerrar() {
   border-bottom-right-radius: 15px;
 }
 
-.filtroFichas{
+.filtroFichas {
   width: 100%;
   margin-bottom: 10px;
 }
 
-.fecha1{
+.fecha1 {
   width: 100%;
 }
 
@@ -439,12 +444,14 @@ function cerrar() {
   font-size: 13px;
   font-weight: bold;
   color: white !important;
-  position: relative; /* Para posicionar el spinner correctamente */
+  position: relative;
+  /* Para posicionar el spinner correctamente */
 }
 
 #lista .q-spinner {
   position: absolute;
-  right: 10px; /* Ajusta según sea necesario */
+  right: 10px;
+  /* Ajusta según sea necesario */
   top: 50%;
   transform: translateY(-50%);
 }
@@ -458,6 +465,7 @@ function cerrar() {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 200px; /* Ajusta el tamaño según lo necesario */
+  height: 200px;
+  /* Ajusta el tamaño según lo necesario */
 }
 </style>

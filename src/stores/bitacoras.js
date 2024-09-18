@@ -127,6 +127,32 @@ export const useBitacoraStore = defineStore("bitacora", () => {
     }
   };
 
+  const cambiaEstado = async (Id, nuevoEstado) => {
+    try {
+      const response = await axios.put(
+        `/Bitacoras/ActualizarEstado/${Id}`, 
+        { estado: nuevoEstado },
+        {
+          headers: {
+            "x-token": useUsuarios.xtoken,
+          },
+        }
+      );
+      Notify.create({
+        type: "positive",
+        message: "Estado de la bitácora actualizado correctamente",
+      });
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      Notify.create({
+        type: "negative",
+        message: "Hubo un error al actualizar el estado de la bitácora",
+      });
+      return error;
+    }
+  };
+
   return {
     crearBitacora,
     listarBitacoras,
@@ -135,6 +161,7 @@ export const useBitacoraStore = defineStore("bitacora", () => {
     listarBitacorasAprendiz,
     listarBitacorasFechaUnica,
     listarBitacoraFechaFicha,
+    cambiaEstado,
     bitacoras,
   };
 });

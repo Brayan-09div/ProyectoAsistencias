@@ -45,7 +45,7 @@ export const useAprendizStore = defineStore("Aprendiz", () => {
       };
       
 
-    const guardarAprendis = async (cc, nom, email, telefono, IdFicha) => {
+    const guardarAprendis = async (cc, nom, email, telefono, IdFicha, firmaVirtual) => {
         try {
             let r = await axios.post(
                 "/Aprendices",
@@ -54,7 +54,8 @@ export const useAprendizStore = defineStore("Aprendiz", () => {
                     nombre: nom,
                     email: email,
                     telefono: telefono,
-                    IdFicha: IdFicha
+                    IdFicha: IdFicha,
+                    firmaVirtual: firmaVirtual
                 },
                 {
                     headers: {
@@ -81,6 +82,39 @@ export const useAprendizStore = defineStore("Aprendiz", () => {
             return error;
         }
     };
+
+    const cargarcould = async (id, formData) => {
+        try {
+          let r = await axios.put(`/Aprendices/cargarCloud/${id}`, formData, {
+            headers: {
+              "x-token": useUsuarios.xtoken,
+              "Content-Type": "multipart/form-data",
+            },
+          });
+          console.log(r);
+          return r;
+        } catch (error) {
+          console.log(error);
+          throw error; 
+        }
+      };
+
+    const updatecoul = async (id) => {
+        try {
+            let r = await axios.put(
+                `/Aprendices/cargarcould/${id}`,{
+                    headers: {
+                        "x-token": useUsuarios.xtoken, 
+                    },
+                }
+            );
+            console.log(r);
+            return r;
+        } catch (error) {
+            console.log(error);
+            return error;
+        }
+    }
 
 
 
@@ -148,6 +182,8 @@ export const useAprendizStore = defineStore("Aprendiz", () => {
         guardarAprendis,
         editarAprendiz,
         activarDesactivarAprendiz,
+        cargarcould,
+        updatecoul,
         store,
 
 
