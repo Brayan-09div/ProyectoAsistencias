@@ -1,22 +1,25 @@
 <template>
   <div id="en">
-    <button id="atras" @click="Salir()"><span class="material-symbols-outlined">arrow_back</span></button>
+    <button id="atras" @click="Salir()">
+      <span class="material-symbols-outlined">arrow_back</span>
+    </button>
     <h1 id="programas">Aprendices</h1>
   </div>
   <hr>
   <div style="margin: 0px;">
     <div class="tablafichas">
       <div style="margin-top: 0px;">
-        <q-btn @click="fixed = true" color="primary" id="agregar-aprendiz"><span
-            class="material-symbols-outlined">add_circle</span>
+        <q-btn @click="fixed = true" color="primary" id="agregar-aprendiz">
+          <span class="material-symbols-outlined">add_circle</span>
           Agregar
         </q-btn>
       </div>
       <q-table :rows="rows" :columns="columns" row-key="codigo">
         <template class="tabla" v-slot:body-cell-opciones="props">
           <q-td :props="props">
-            <q-btn id="edit" @click="traerDatos(props.row)" color="primary"><span
-                class="material-symbols-outlined">edit</span></q-btn>
+            <q-btn id="edit" @click="traerDatos(props.row)" color="primary">
+              <span class="material-symbols-outlined">edit</span>
+            </q-btn>
           </q-td>
         </template>
         <template v-slot:header-cell="props">
@@ -32,6 +35,7 @@
           </q-td>
         </template>
       </q-table>
+      
       <q-dialog v-model="fixed" :backdrop-filter="'blur(4px) saturate(150%)'" transition-show="rotate"
         transition-hide="rotate" persistent>
         <q-card class="modal-card">
@@ -60,15 +64,34 @@
               error-message="El teléfono del aprendiz es requerido" />
 
             <div class="file-upload">
-              <q-file v-model="firmaVirtual" label="Firma Virtual" filled accept="image/*"
-                @update:model-value="handleFileChange">
+              <q-file 
+                v-model="firmaVirtual" 
+                label="Firma Virtual (Opcional)" 
+                filled 
+                accept="image/*"
+                @update:model-value="handleFileChange"
+              >
                 <template v-slot:prepend>
                   <q-icon name="attach_file" />
                 </template>
               </q-file>
-              <q-img v-if="previewUrl" :src="previewUrl" style="max-width: 200px; max-height: 200px;" />
+              
+              <!-- Mostrar la foto existente si no se ha cargado una nueva -->
+              <q-img 
+                v-if="!previewUrl && datosExistentesFirma" 
+                :src="datosExistentesFirma" 
+                style="max-width: 200px; max-height: 200px;" 
+                class="q-mt-md"
+              />
+              
+              <!-- Mostrar la previsualización de la nueva foto si se ha seleccionado -->
+              <q-img 
+                v-if="previewUrl" 
+                :src="previewUrl" 
+                style="max-width: 200px; max-height: 200px;" 
+                class="q-mt-md"
+              />
             </div>
-
           </div>
 
           <div class="modal-footer">
@@ -92,7 +115,6 @@ import { useAprendizStore } from "../stores/aprendiz.js";
 import { useFichaStore } from '../stores/fichas.js';
 import { Dark } from 'quasar';
 
-
 const router = useRouter();
 
 const useAprendiz = useAprendizStore();
@@ -113,7 +135,7 @@ let fichas = ref([]);
 let options = ref(fichas.value);
 let ccOriginal = ref("");
 let emailOriginal = ref("");
-
+let datosExistentesFirma = ref(""); // Nueva referencia para la firma existente
 
 const nomError = ref(false);
 const ccError = ref(false);
@@ -160,7 +182,18 @@ function traerDatos(datos) {
     label: datos.IdFicha.nombre,
     value: datos.IdFicha._id
   };
-  firmaVirtual.value = datos.firmaVirtual;
+  
+  // Asignar la URL de la firma existente si está disponible
+  if (datos.firmaVirtual) {
+    datosExistentesFirma.value = datos.firmaVirtual; // Suponiendo que es una URL
+  } else {
+    datosExistentesFirma.value = '';
+  }
+
+ 
+  firmaVirtual.value = null;
+  previewUrl.value = '';
+  
   ccOriginal.value = datos.cc;
   emailOriginal.value = datos.email;
 }
@@ -174,6 +207,7 @@ function cerrar() {
   IdFicha.value = "";
   firmaVirtual.value = null;
   previewUrl.value = '';
+  datosExistentesFirma.value = ''; // Limpiar la firma existente
 
   nomError.value = false;
   ccError.value = false;
@@ -207,7 +241,7 @@ async function crearAprendiz() {
   if (res?.response?.data?.errors) {
     fixed.value = true;
   } else {
-    if (firmaVirtual.value) {
+    if (firmaVirtual.value) { // Solo cargar si se ha seleccionado una nueva foto
       await cargarCloud();
     }
     await traer();
@@ -241,11 +275,11 @@ async function editarAprendiz() {
   return res;
 }
 
-
 const handleFileChange = (file) => {
   if (file) {
     firmaVirtual.value = file;
     previewUrl.value = URL.createObjectURL(file);
+    datosExistentesFirma.value = ''; // Ocultar la firma existente al seleccionar una nueva
   } else {
     firmaVirtual.value = null;
     previewUrl.value = '';

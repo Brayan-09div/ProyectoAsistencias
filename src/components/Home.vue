@@ -29,34 +29,51 @@
           </router-link>
 
           <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd">
-            <q-list padding>
-              <!-- Lista de opciones -->
-              <q-item clickable to="/usuario" v-ripple class="menu-button">
-                <q-item-section>USUARIOS</q-item-section>
-              </q-item>
+  <q-list padding>
+    <!-- Lista de opciones con iconos -->
+    <q-item clickable to="/usuario" v-ripple class="menu-button">
+      <q-item-section avatar>
+        <q-icon name="person" />
+      </q-item-section>
+      <q-item-section>USUARIOS</q-item-section>
+    </q-item>
 
-              <q-item clickable to="/aprendiz" v-ripple class="menu-button">
-                <q-item-section>APRENDICES</q-item-section>
-              </q-item>
+    <q-item clickable to="/aprendiz" v-ripple class="menu-button">
+      <q-item-section avatar>
+        <q-icon name="school" />
+      </q-item-section>
+      <q-item-section>APRENDICES</q-item-section>
+    </q-item>
 
-              <q-item clickable to="/fichas" v-ripple class="menu-button">
-                <q-item-section>FICHAS</q-item-section>
-              </q-item>
+    <q-item clickable to="/fichas" v-ripple class="menu-button">
+      <q-item-section avatar>
+        <q-icon name="folder" />
+      </q-item-section>
+      <q-item-section>FICHAS</q-item-section>
+    </q-item>
 
-              <q-item clickable to="/bitacoras" v-ripple class="menu-button">
-                <q-item-section>BITACORAS</q-item-section>
-              </q-item>
+    <q-item clickable to="/bitacoras" v-ripple class="menu-button">
+      <q-item-section avatar>
+        <q-icon name="book" />
+      </q-item-section>
+      <q-item-section>BITACORAS</q-item-section>
+    </q-item>
 
-              <q-item clickable to="/informesAprendiz" v-ripple class="menu-button">
-                <q-item-section>INFORMES APRENDIZ</q-item-section>
-              </q-item>
+    <q-item clickable to="/informesAprendiz" v-ripple class="menu-button">
+      <q-item-section avatar>
+        <q-icon name="assignment_ind" />
+      </q-item-section>
+      <q-item-section>INFORMES APRENDIZ</q-item-section>
+    </q-item>
 
-              <q-item clickable to="/informes" v-ripple class="menu-button">
-                <q-item-section>INFORMES</q-item-section>
-              </q-item>
-
-            </q-list>
-          </q-scroll-area>
+    <q-item clickable to="/informes" v-ripple class="menu-button">
+      <q-item-section avatar>
+        <q-icon name="assessment" />
+      </q-item-section>
+      <q-item-section>INFORMES</q-item-section>
+    </q-item>
+  </q-list>
+</q-scroll-area>
         </q-drawer>
 
         <div>
