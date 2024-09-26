@@ -9,48 +9,47 @@
         <hr>
 
         <q-dialog v-model="mostrarModal" persistent>
-        <q-card class="modal-card">
-            <div class="modal-header">Seleccionar Filtro</div>
-            <div class="modal-body">
-        <div class="lista">
-            <q-select rounded outlined v-model="idAprendis" use-input hide-selected fill-input input-debounce="0"
-                :options="optionsAprendiz" @filter="filterAprendiz" label="Selecciona un aprendiz">
-                <template v-slot:no-option>
-                    <q-item>
-                        <q-item-section class="text-grey">
-                            Sin resultados
-                        </q-item-section>
-                    </q-item>
-                </template>
-            </q-select>
-        </div>
-        </div>
+            <q-card class="modal-card">
+                <div class="modal-header">Seleccionar Filtro</div>
+                <div class="modal-body">
+                    <div class="lista">
+                        <q-select rounded outlined v-model="idAprendis" use-input hide-selected fill-input input-debounce="0"
+                            :options="optionsAprendiz" @filter="filterAprendiz" label="Selecciona un aprendiz">
+                            <template v-slot:no-option>
+                                <q-item>
+                                    <q-item-section class="text-grey">
+                                        Sin resultados
+                                    </q-item-section>
+                                </q-item>
+                            </template>
+                        </q-select>
+                    </div>
+                </div>
 
-       <div class="modal-footer">
-        <q-card-actions align="right">
-          <q-btn id="cierra" flat label="Cerrar" color="primary" v-close-popup @click="cerrarModal" />
-          <q-btn id="lista" flat label="Listar" color="primary" @click="listarBitacorasAprendiz" />
-        </q-card-actions>
-      </div>
-      </q-card>
-    </q-dialog>
+                <div class="modal-footer">
+                    <q-card-actions align="right">
+                        <q-btn id="cierra" flat label="Cerrar" color="primary" v-close-popup @click="cerrarModal" />
+                        <q-btn id="lista" flat label="Listar" color="primary" @click="listarBitacorasAprendiz" />
+                    </q-card-actions>
+                </div>
+            </q-card>
+        </q-dialog>
 
-    <div style="margin: 0px;">
+        <div style="margin: 0px;">
             <div class="tablafichas">
                 <button id="btnlist" @click="abrirModal()">LISTAR APRENDIZ</button>
-             
+
                 <q-table :rows="rows" :columns="columns" row-key="_id">
                     <template v-slot:body-cell-estado="props">
                         <q-td :props="props">
-                            <q-select v-model="props.row.estado" :options="['pendiente', 'asistió', 'faltó', 'excusa']"
-                                @update:model-value="cambiarEstado(props.row._id, props.row.estado)" />
+                            {{ props.row.estado }}
                         </q-td>
                     </template>
                     <template v-slot:header-cell="props">
-            <q-th :props="props" :style="{ fontWeight: 'bold', color: 'black', fontSize: '14px' }">
-              {{ props.col.label }}
-            </q-th>
-          </template>
+                        <q-th :props="props" :style="{ fontWeight: 'bold', color: 'black', fontSize: '14px' }">
+                            {{ props.col.label }}
+                        </q-th>
+                    </template>
                 </q-table>
 
                 <q-dialog v-model="fixed" :backdrop-filter="'blur(4px) saturate(150%)'" transition-show="rotate"
@@ -87,7 +86,6 @@
                         </q-card-actions>
                     </q-card>
                 </q-dialog>
-                <!-- <q-toggle v-model="isDark" label="Modo Oscuro" /> -->
             </div>
         </div>
     </div>
@@ -100,7 +98,6 @@ import { Dark, useQuasar } from 'quasar';
 import { useBitacoraStore } from '../stores/bitacoras.js';
 import { useAprendizStore } from "../stores/aprendiz.js";
 
-
 const useBitacora = useBitacoraStore();
 const useAprendiz = useAprendizStore();
 
@@ -112,29 +109,20 @@ const fixed = ref(false);
 const isDark = ref(Dark.isActive);
 
 let fecha = ref("");
-
 let fechaInicio = ref("");
 let fechaFin = ref("");
 
-
-
 let idAprendis = ref("");
-
-
 
 let aprendiz = ref([]);
 let optionsAprendiz = ref(aprendiz.value);
-const mostrarModal = ref(false); 
-
+const mostrarModal = ref(false);
 
 watch(isDark, val => Dark.set(val));
-
 
 onBeforeMount(() => {
     traer();
 });
-
-
 
 function filterAprendiz(val, update, abort) {
     update(() => {
@@ -144,8 +132,6 @@ function filterAprendiz(val, update, abort) {
 }
 
 const rows = ref([]);
-
-
 
 async function traer() {
     const res = await useBitacora.listarBitacoras();
@@ -164,17 +150,12 @@ async function traer() {
         return bitacora;
     });
 }
-  
- 
-
-
 
 async function listarBitacorasAprendiz() {
     try {
         console.log(idAprendis.value);
 
         const res = await useBitacora.listarBitacorasAprendiz(idAprendis.value.value);
-
 
         if (!res?.response?.data?.errors) {
             rows.value = res.map(bitacora => {
@@ -197,17 +178,6 @@ async function listarBitacorasAprendiz() {
     mostrarModal.value = false;
 }
 
-
-function cambiarEstado(id, nuevoEstado) {
-    useBitacora.cambiaEstado(id, nuevoEstado)
-        .then(() => {
-            listarBitacorasAprendiz();
-        })
-        .catch(error => {
-            console.error('Error al cambiar estado:', error);
-     
-        });
-}
 const columns = ref([
     { name: 'fecha', label: 'FECHA', field: 'fecha', align: 'center', sortable: true },
     { name: 'IdAprendiz', align: 'center', label: 'NOMBRE', field: row => row?.IdAprendis?.nombre, sortable: true },
@@ -219,24 +189,23 @@ const columns = ref([
     { name: 'estado', align: 'center', label: 'ESTADO', field: 'estado', sortable: true },
 ]);
 
-
 function abrirModal() {
-  mostrarModal.value = true; // Abre el modal
+    mostrarModal.value = true; // Abre el modal
 }
 
 function cerrarModal() {
-  mostrarModal.value = false; // Cierra el modal
+    mostrarModal.value = false; // Cierra el modal
 }
 
 const Salir = async () => {
-  router.replace("/home")
+    router.replace("/home")
 }
 
 function cerrar() {
-  fixed.value = false;
+    fixed.value = false;
 }
-
 </script>
+
 
 
 <style scoped>

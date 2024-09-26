@@ -9,9 +9,6 @@
     <hr>
 
     <div class="btnsB">
-      <q-btn id="agregarficha" @click="fixed = true" color="primary">
-        <span class="material-symbols-outlined">add_circle</span>Crear
-      </q-btn>
       <button id="btnlist" @click="abrirModal1()">LISTAR FECHAS</button>
       <button id="btnlist" @click="abrirModal2()">LISTAR FICHA</button>
       <button id="btnlist" @click="abrirModal3()">LISTAR APRENDIZ</button>

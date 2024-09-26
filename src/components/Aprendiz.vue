@@ -35,7 +35,7 @@
           </q-td>
         </template>
       </q-table>
-      
+
       <q-dialog v-model="fixed" :backdrop-filter="'blur(4px) saturate(150%)'" transition-show="rotate"
         transition-hide="rotate" persistent>
         <q-card class="modal-card">
@@ -48,8 +48,8 @@
               error-message="El nombre del aprendiz es requerido" />
             <q-input filled v-model="cc" label="CC" :dense="dense" :error="ccError"
               error-message="El CC es requerido" />
-            <q-select rounded outlined v-model="IdFicha" use-input hide-selected fill-input input-debounce="0"
-              :options="options" @filter="filterFn" label="Selecciona una ficha">
+            <q-select filled v-model="IdFicha" :options="options" label="Selecciona una ficha" :dense="dense" use-input
+              hide-selected fill-input input-debounce="0" @filter="filterFn">
               <template v-slot:no-option>
                 <q-item>
                   <q-item-section class="text-grey">
@@ -64,33 +64,19 @@
               error-message="El teléfono del aprendiz es requerido" />
 
             <div class="file-upload">
-              <q-file 
-                v-model="firmaVirtual" 
-                label="Firma Virtual (Opcional)" 
-                filled 
-                accept="image/*"
-                @update:model-value="handleFileChange"
-              >
+              <q-file v-model="firmaVirtual" label="Firma Virtual (Opcional)" filled accept="image/*"
+                @update:model-value="handleFileChange">
                 <template v-slot:prepend>
                   <q-icon name="attach_file" />
                 </template>
               </q-file>
-              
+
               <!-- Mostrar la foto existente si no se ha cargado una nueva -->
-              <q-img 
-                v-if="!previewUrl && datosExistentesFirma" 
-                :src="datosExistentesFirma" 
-                style="max-width: 200px; max-height: 200px;" 
-                class="q-mt-md"
-              />
-              
+              <q-img v-if="!previewUrl && datosExistentesFirma" :src="datosExistentesFirma"
+                style="max-width: 200px; max-height: 200px;" class="q-mt-md" />
+
               <!-- Mostrar la previsualización de la nueva foto si se ha seleccionado -->
-              <q-img 
-                v-if="previewUrl" 
-                :src="previewUrl" 
-                style="max-width: 200px; max-height: 200px;" 
-                class="q-mt-md"
-              />
+              <q-img v-if="previewUrl" :src="previewUrl" style="max-width: 200px; max-height: 200px;" class="q-mt-md" />
             </div>
           </div>
 
@@ -135,7 +121,7 @@ let fichas = ref([]);
 let options = ref(fichas.value);
 let ccOriginal = ref("");
 let emailOriginal = ref("");
-let datosExistentesFirma = ref(""); // Nueva referencia para la firma existente
+let datosExistentesFirma = ref("");
 
 const nomError = ref(false);
 const ccError = ref(false);
@@ -182,18 +168,17 @@ function traerDatos(datos) {
     label: datos.IdFicha.nombre,
     value: datos.IdFicha._id
   };
-  
-  // Asignar la URL de la firma existente si está disponible
+
   if (datos.firmaVirtual) {
-    datosExistentesFirma.value = datos.firmaVirtual; // Suponiendo que es una URL
+    datosExistentesFirma.value = datos.firmaVirtual;
   } else {
     datosExistentesFirma.value = '';
   }
 
- 
+
   firmaVirtual.value = null;
   previewUrl.value = '';
-  
+
   ccOriginal.value = datos.cc;
   emailOriginal.value = datos.email;
 }
@@ -207,7 +192,7 @@ function cerrar() {
   IdFicha.value = "";
   firmaVirtual.value = null;
   previewUrl.value = '';
-  datosExistentesFirma.value = ''; // Limpiar la firma existente
+  datosExistentesFirma.value = '';
 
   nomError.value = false;
   ccError.value = false;
@@ -235,15 +220,12 @@ async function crearAprendiz() {
   if (b.value) {
     res = await editarAprendiz();
   } else {
-    res = await useAprendiz.guardarAprendis(cc.value, nom.value, email.value, telefono.value, IdFicha.value.value);
+    res = await useAprendiz.guardarAprendis(cc.value, nom.value, email.value, telefono.value, IdFicha.value.value, firmaVirtual.value);
   }
 
   if (res?.response?.data?.errors) {
     fixed.value = true;
   } else {
-    if (firmaVirtual.value) { // Solo cargar si se ha seleccionado una nueva foto
-      await cargarCloud();
-    }
     await traer();
     fixed.value = false;
     cerrar();

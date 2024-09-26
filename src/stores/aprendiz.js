@@ -10,6 +10,7 @@ export const useAprendizStore = defineStore("Aprendiz", () => {
     const useUsuarios = useUsuariosStore()
     
     const store = ref("store");
+    
     const listarAprendiz = async () => {
         try {
             let r = await axios.get("/Aprendices/Listar", {
@@ -45,21 +46,25 @@ export const useAprendizStore = defineStore("Aprendiz", () => {
       };
       
 
-    const guardarAprendis = async (cc, nom, email, telefono, IdFicha, firmaVirtual) => {
+      const guardarAprendis = async (cc, nom, email, telefono, IdFicha, firmaVirtual) => {
         try {
+            const formData = new FormData();
+            formData.append('cc', cc);
+            formData.append('nombre', nom);
+            formData.append('email', email);
+            formData.append('telefono', telefono);
+            formData.append('IdFicha', IdFicha);
+            if (firmaVirtual) {
+                formData.append('firmaVirtual', firmaVirtual);
+            }
+    
             let r = await axios.post(
                 "/Aprendices",
-                {
-                    cc: cc,
-                    nombre: nom,
-                    email: email,
-                    telefono: telefono,
-                    IdFicha: IdFicha,
-                    firmaVirtual: firmaVirtual
-                },
+                formData,
                 {
                     headers: {
-                        "x-token": useUsuarios.xtoken, 
+                        "x-token": useUsuarios.xtoken,
+                        'Content-Type': 'multipart/form-data'
                     },
                 }
             );
