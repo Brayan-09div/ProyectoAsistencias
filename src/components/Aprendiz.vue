@@ -250,9 +250,25 @@ async function editarAprendiz() {
   if (IdFicha.value) {
     datosActualizados.IdFicha = IdFicha.value.value;
   }
-
+  if (firmaVirtual.value) {
+    const formData = new FormData();
+    formData.append("archivo", firmaVirtual.value);
+    try {
+      await useAprendiz.cargarcould(id.value, formData);
+      datosActualizados.fotoActualizada = true;
+    } catch (error) {
+      return; 
+    }
+  }
   let res = await useAprendiz.editarAprendiz(id.value, datosActualizados);
-
+  if (res.status === 200) {
+    $q.notify({
+      color: 'positive',
+      message: 'Aprendiz actualizado correctamente',
+      icon: 'check_circle'
+    });
+  } else {
+  }
   await traer();
   return res;
 }
@@ -261,7 +277,7 @@ const handleFileChange = (file) => {
   if (file) {
     firmaVirtual.value = file;
     previewUrl.value = URL.createObjectURL(file);
-    datosExistentesFirma.value = ''; // Ocultar la firma existente al seleccionar una nueva
+    datosExistentesFirma.value = ''; 
   } else {
     firmaVirtual.value = null;
     previewUrl.value = '';

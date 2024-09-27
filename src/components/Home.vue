@@ -18,62 +18,67 @@
         <q-drawer v-model="leftDrawerOpen" :width="250" side="left" overlay behavior="mobile" class="bg-black"
           style="background-color: white !important;">
           <router-link to="/perfil" class="text-weight-bold">
-            <q-img class="absolute-top" src="https://caracol.com.co/resizer/v2/KWOY6HLXGJDY7FINVWKHW4BZH4.jpg?auth=1cb703fcb1fe937ca055451ec405ad84789073f23e256b7fba7bf44f1622b06e&width=650&height=488&quality=70&smart=true" style="height: 150px">
+            <q-img class="absolute-top"
+              src="https://caracol.com.co/resizer/v2/KWOY6HLXGJDY7FINVWKHW4BZH4.jpg?auth=1cb703fcb1fe937ca055451ec405ad84789073f23e256b7fba7bf44f1622b06e&width=650&height=488&quality=70&smart=true"
+              style="height: 150px">
               <div class="absolute-bottom bg-transparent">
                 <q-avatar size="70px" class="q-mb-sm">
-                  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWoms2HEy0ELPrZGRr001PN2sh5sq9dU_BWQ&s">
+                  <q-avatar size="70px" class="q-mb-sm">
+                    <img :src="useUsuarios.usuarios.usuario.avatar.trim()" alt="User avatar">
+                  </q-avatar>
                 </q-avatar>
-                <div style="text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3); text-transform: uppercase;">{{ useUsuarios.usuarios.usuario.nombre }}</div>
+                <div style="text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3); text-transform: uppercase;">{{
+                  useUsuarios.usuarios.usuario.nombre }}</div>
               </div>
             </q-img>
           </router-link>
 
           <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd">
-  <q-list padding>
-    <!-- Lista de opciones con iconos -->
-    <q-item clickable to="/usuario" v-ripple class="menu-button">
-      <q-item-section avatar>
-        <q-icon name="person" />
-      </q-item-section>
-      <q-item-section>USUARIOS</q-item-section>
-    </q-item>
+            <q-list padding>
+              <!-- Lista de opciones con iconos -->
+              <q-item clickable to="/usuario" v-ripple class="menu-button">
+                <q-item-section avatar>
+                  <q-icon name="person" />
+                </q-item-section>
+                <q-item-section>USUARIOS</q-item-section>
+              </q-item>
 
-    <q-item clickable to="/aprendiz" v-ripple class="menu-button">
-      <q-item-section avatar>
-        <q-icon name="school" />
-      </q-item-section>
-      <q-item-section>APRENDICES</q-item-section>
-    </q-item>
+              <q-item clickable to="/aprendiz" v-ripple class="menu-button">
+                <q-item-section avatar>
+                  <q-icon name="school" />
+                </q-item-section>
+                <q-item-section>APRENDICES</q-item-section>
+              </q-item>
 
-    <q-item clickable to="/fichas" v-ripple class="menu-button">
-      <q-item-section avatar>
-        <q-icon name="folder" />
-      </q-item-section>
-      <q-item-section>FICHAS</q-item-section>
-    </q-item>
+              <q-item clickable to="/fichas" v-ripple class="menu-button">
+                <q-item-section avatar>
+                  <q-icon name="folder" />
+                </q-item-section>
+                <q-item-section>FICHAS</q-item-section>
+              </q-item>
 
-    <q-item clickable to="/bitacoras" v-ripple class="menu-button">
-      <q-item-section avatar>
-        <q-icon name="book" />
-      </q-item-section>
-      <q-item-section>BITACORAS</q-item-section>
-    </q-item>
+              <q-item clickable to="/bitacoras" v-ripple class="menu-button">
+                <q-item-section avatar>
+                  <q-icon name="book" />
+                </q-item-section>
+                <q-item-section>BITACORAS</q-item-section>
+              </q-item>
 
-    <q-item clickable to="/informesAprendiz" v-ripple class="menu-button">
-      <q-item-section avatar>
-        <q-icon name="assignment_ind" />
-      </q-item-section>
-      <q-item-section>INFORMES APRENDIZ</q-item-section>
-    </q-item>
+              <q-item clickable to="/informesAprendiz" v-ripple class="menu-button">
+                <q-item-section avatar>
+                  <q-icon name="assignment_ind" />
+                </q-item-section>
+                <q-item-section>INFORMES APRENDIZ</q-item-section>
+              </q-item>
 
-    <q-item clickable to="/informes" v-ripple class="menu-button">
-      <q-item-section avatar>
-        <q-icon name="assessment" />
-      </q-item-section>
-      <q-item-section>INFORMES</q-item-section>
-    </q-item>
-  </q-list>
-</q-scroll-area>
+              <q-item clickable to="/informes" v-ripple class="menu-button">
+                <q-item-section avatar>
+                  <q-icon name="assessment" />
+                </q-item-section>
+                <q-item-section>INFORMES</q-item-section>
+              </q-item>
+            </q-list>
+          </q-scroll-area>
         </q-drawer>
 
         <div>
@@ -148,11 +153,11 @@
             </q-card-section>
           </q-card>
         </div>
-        
+
 
         <hr v-if="isHome">
 
-  
+
 
         <q-footer elevated class="bg-black text-white">
           <q-toolbar style="background-color: #307e35">
@@ -176,7 +181,7 @@ const router = useRouter();
 const route = useRoute();
 const useUsuarios = useUsuariosStore();
 const leftDrawerOpen = ref(false);
-const isHome = ref(route.path === '/home'); 
+const isHome = ref(route.path === '/home');
 
 const toggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value;
@@ -193,6 +198,13 @@ watch(
     isHome.value = newPath === '/home';
   }
 );
+
+const getAvatarUrl = (avatar) => {
+  if (!avatar) {
+    return '/path/to/default/avatar.jpg';
+  }
+  return `https://tu-dominio.com/${avatar}`;
+};
 </script>
 
 <style>

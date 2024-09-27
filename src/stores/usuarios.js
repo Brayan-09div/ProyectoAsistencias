@@ -66,6 +66,44 @@ export const useUsuariosStore = defineStore(
       }
     };
 
+    
+  const cargarcould = async (id, formData) =>{
+      try {
+        const response = await axios.put(`/Usuarios/cargarCloud/${id}`, formData, {
+          headers: {
+            "x-token": xtoken.value,
+            "Content-Type": "multipart/form-data",
+          },
+        });
+      
+        if (response.data && response.data.usuario) {
+          response.data.usuario;
+        }
+        return response;
+      } catch (error) {
+        console.error('Error al cargar el archivo:', error);
+        throw error;
+      }
+    }
+
+  const updatecoul = async (id) => {
+      try {
+          let r = await axios.put(
+              `/Usuarios/cargarcould/${id}`,{
+                  headers: {
+                      "x-token": xtoken.value, 
+                  },
+              }
+          );
+          console.log(r);
+          return r;
+      } catch (error) {
+          console.log(error);
+          return error;
+      }
+  }
+
+
     const listarUsuarios = async () => {
       try {
         let r = await axios.get("/Usuarios/listar", {
@@ -260,6 +298,8 @@ export const useUsuariosStore = defineStore(
       solicitarRecuperacion,
       restablecerContrasena,
       cambiarPassword,
+      updatecoul,
+      cargarcould,
       xtoken,
       usuarios,
     };

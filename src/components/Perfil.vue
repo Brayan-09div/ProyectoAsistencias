@@ -9,7 +9,7 @@
         <div class="profile-header">
           <div class="profile-cover" :style="{ backgroundImage: `url(${coverPhoto})` }"></div>
           <div class="profile-avatar">
-            <img :src="photo" alt="User Avatar" @click="openPhotoDialog" />
+            <img :src="avatarUrl" alt="Avatar del Usuario" @click="openPhotoDialog" />
             <div class="avatar-edit" @click="openPhotoDialog">
               <q-icon name="edit" size="sm" color="white" />
             </div>
@@ -57,7 +57,7 @@
             <div class="text-h6">Cambiar Foto de Perfil</div>
           </q-card-section>
           <q-card-section class="q-pt-none">
-            <q-file v-model="newPhoto" label="Seleccionar nueva foto" filled style="max-width: 300px">
+            <q-file v-model="newPhoto" label="Seleccionar nueva foto" filled style="max-width: 300px" accept="image/*">
               <template v-slot:prepend>
                 <q-icon name="attach_file" />
               </template>
@@ -65,7 +65,7 @@
           </q-card-section>
           <q-card-actions align="right">
             <q-btn flat label="Cancelar" color="primary" v-close-popup @click="cerrarPhotoDialog" />
-            <q-btn flat label="Guardar" color="primary" @click="updatePhoto" />
+            <q-btn flat label="Guardar" color="primary" @click="updatePhoto" :loading="loadingPhoto" />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -145,42 +145,51 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUsuariosStore } from '../stores/usuarios.js';
 import { Notify } from 'quasar';
 
-// Store de usuarios
+
 const useUsuarios = useUsuariosStore();
 
-// Estados de los diálogos
+
 const changePasswordDialog = ref(false);
 const editDialog = ref(false);
 const photoDialog = ref(false);
 
-// Estados y variables para cambiar contraseña
 const contraseñavieja = ref('');
 const password = ref('');
 const contraseñaviejaError = ref(false);
 const contraseñanuevaError = ref(false);
 
-// Estados y variables para editar perfil
+
 const nom = ref(useUsuarios.usuarios.usuario.nombre);
 const email = ref(useUsuarios.usuarios.usuario.email);
-const id = ref(useUsuarios.usuarios.usuario._id)
+const id = ref(useUsuarios.usuarios.usuario._id);
 const nomError = ref(false);
 const emailError = ref(false);
 
 
 const newPhoto = ref(null);
-const photo = ref('https://as1.ftcdn.net/v2/jpg/01/12/09/12/1000_F_112091233_xghsriqmHzk4sq71lWBL4q0e7n9QJKX6.jpg');
+const avatarUrl = ref('');
 const coverPhoto = ref('https://images.unsplash.com/photo-1557683316-973673baf926?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1080&q=80');
 
 // Variables de control
 const loadingGuardar = ref(false);
+const loadingPhoto = ref(false);
 const router = useRouter();
 
-// Funciones de utilidad
+onMounted(async () => {
+  try {
+    avatarUrl.value =   useUsuarios.usuarios.usuario.avatar|| 'https://as1.ftcdn.net/v2/jpg/01/12/09/12/1000_F_112091233_xghsriqmHzk4sq71lWBL4q0e7n9QJKX6.jpg';
+  } catch (error) {
+    console.error('Error al obtener el avatar del usuario:', error);
+    avatarUrl.value = 'https://as1.ftcdn.net/v2/jpg/01/12/09/12/1000_F_112091233_xghsriqmHzk4sq71lWBL4q0e7n9QJKX6.jpg';
+  }
+});
+
+
 const formatDate = (date) => {
   const opciones = { year: 'numeric', month: 'long', day: 'numeric' };
   return new Date(date).toLocaleDateString(undefined, opciones);
@@ -233,40 +242,38 @@ const cerrarPhotoDialog = () => {
   newPhoto.value = null;
 };
 
-// Función para actualizar la foto de perfil
 const updatePhoto = async () => {
   if (newPhoto.value) {
     try {
-      // Aquí puedes implementar la lógica para subir la foto al servidor
-      // y obtener la URL de la nueva foto. Por ahora, simularemos la actualización.
-      
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        photo.value = e.target.result;
+      loadingPhoto.value = true;
+      const formData = new FormData();
+      formData.append('archivo', newPhoto.value); 
+      const response = await useUsuarios.cargarcould(id.value, formData);
+      if (response.data && response.data.url) {
+        avatarUrl.value = response.data.url;
         Notify.create({
           color: 'positive',
           message: 'Foto de perfil actualizada con éxito.',
           icon: 'check_circle',
         });
         photoDialog.value = false;
-      };
-      reader.readAsDataURL(newPhoto.value);
-      
-      // Si tienes una función en el store para actualizar la foto en la base de datos,
-      // llama a esa función aquí.
-      // await useUsuarios.actualizarFotoPerfil(newPhoto.value);
+      } else {
+        throw new Error('No se recibió la URL del avatar actualizado');
+      }
     } catch (error) {
       console.error('Error al actualizar la foto de perfil:', error);
       Notify.create({
         color: 'negative',
-        message: 'Error al actualizar la foto de perfil.',
+        message: 'Error al actualizar la foto de perfil: ' + (error.response?.data?.error || error.message),
         icon: 'error',
       });
+    } finally {
+      loadingPhoto.value = false;
     }
   }
 };
 
-// Función para cambiar contraseña
+
 const restablecerContraseña = async () => {
   contraseñaviejaError.value = !contraseñavieja.value;
   contraseñanuevaError.value = !password.value;
@@ -283,7 +290,7 @@ const restablecerContraseña = async () => {
 
   try {
     loadingGuardar.value = true;
-    await useUsuarios.cambiarPassword(useUsuarios.usuarios.usuario._id, contraseñavieja.value, password.value);
+    await useUsuarios.cambiarPassword(id.value, contraseñavieja.value, password.value);
     Notify.create({
       color: 'positive',
       message: 'Contraseña cambiada con éxito.',
@@ -304,7 +311,7 @@ const restablecerContraseña = async () => {
   }
 };
 
-// Función para editar perfil
+
 const editarUsuario = async () => {
   nomError.value = !nom.value;
   emailError.value = !email.value || !validateEmail(email.value);
@@ -320,8 +327,21 @@ const editarUsuario = async () => {
   try {
     loadingGuardar.value = true;
     await useUsuarios.editarUsuario(id.value, email.value, nom.value);
+    Notify.create({
+      color: 'positive',
+      message: 'Perfil actualizado con éxito.',
+      icon: 'check_circle',
+      timeout: 2500,
+    });
     cerrarEditDialog();
   } catch (error) {
+    console.error('Error al editar el perfil:', error);
+    Notify.create({
+      color: 'negative',
+      message: 'Error al actualizar el perfil.',
+      icon: 'error',
+      timeout: 2500,
+    });
   } finally {
     loadingGuardar.value = false;
   }
@@ -333,7 +353,7 @@ const validateEmail = (email) => {
   return re.test(email);
 };
 
-// Función para manejar enlaces de redes sociales
+
 const openSocialLink = (platform) => {
   const urls = {
     facebook: 'https://facebook.com',
@@ -343,10 +363,11 @@ const openSocialLink = (platform) => {
   window.open(urls[platform], '_blank');
 };
 
-// Función para salir/navegar al home
+
 const Salir = () => {
   router.replace('/home');
 };
+
 </script>
 
 <style scoped>
