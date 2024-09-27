@@ -1,7 +1,7 @@
 <template>
+  <button id="atras" @click="Salir()"><span class="material-symbols-outlined">arrow_back</span></button>
   <div class="perfilcompleto">
     <!-- Botón de regreso -->
-    <button id="atras" @click="Salir()"><span class="material-symbols-outlined">arrow_back</span></button>
 
     <div class="profile-container">
       <div class="profile-card">
@@ -35,49 +35,49 @@
 
         <!-- Acciones del perfil -->
         <div class="profile-actions">
-          <q-btn color="primary" icon="lock" label="Cambiar Contraseña" @click="openChangePasswordDialog" class="q-mr-sm" />
-          <q-btn color="secondary" icon="edit" label="Editar Perfil" @click="openEditDialog" />
+          <q-btn color="green-7" icon="lock" label="Cambiar Contraseña" @click="openChangePasswordDialog" class="q-mr-sm" />
+          <q-btn color="green-7" icon="edit" label="Editar Perfil" @click="openEditDialog" />
         </div>
 
         <!-- Enlaces de redes sociales -->
-        <div class="social-links">
+        <!-- <div class="social-links">
           <p>Redes Sociales</p>
           <div>
             <q-btn round color="blue" icon="fab fa-facebook-f" class="q-mr-sm" @click="openSocialLink('facebook')" />
             <q-btn round color="light-blue" icon="fab fa-twitter" class="q-mr-sm" @click="openSocialLink('twitter')" />
             <q-btn round color="light-blue-10" icon="fab fa-linkedin-in" @click="openSocialLink('linkedin')" />
           </div>
-        </div>
+        </div> -->
       </div>
 
       <!-- Diálogo para cambiar la foto de perfil -->
       <q-dialog v-model="photoDialog">
-        <q-card style="min-width: 350px">
-          <q-card-section>
-            <div class="text-h6">Cambiar Foto de Perfil</div>
-          </q-card-section>
+        <q-card class="modal-card" style="min-width: 350px">
+            <div class="modal-header">Cambiar Foto de Perfil</div>
           <q-card-section class="q-pt-none">
-            <q-file v-model="newPhoto" label="Seleccionar nueva foto" filled style="max-width: 300px">
+            <div class="modal-body">
+            <q-file v-model="newPhoto" label="Seleccionar nueva foto" filled>
               <template v-slot:prepend>
                 <q-icon name="attach_file" />
               </template>
             </q-file>
+            </div>
           </q-card-section>
+          <div class="modal-footer">
           <q-card-actions align="right">
             <q-btn flat label="Cancelar" color="primary" v-close-popup @click="cerrarPhotoDialog" />
-            <q-btn flat label="Guardar" color="primary" @click="updatePhoto" />
+            <q-btn flat label="Guardar" color="green-7" @click="updatePhoto" />
           </q-card-actions>
+          </div>
         </q-card>
       </q-dialog>
 
       <!-- Diálogo para cambiar contraseña -->
       <q-dialog v-model="changePasswordDialog" :backdrop-filter="'blur(4px) saturate(150%)'" transition-show="rotate" transition-hide="rotate" persistent>
-        <q-card>
-          <q-card-section>
-            <div class="text-h6">Cambiar Contraseña</div>
-          </q-card-section>
-          <q-separator />
+        <q-card class="modal-card">
+            <div class="modal-header">Cambiar Contraseña</div>
           <q-card-section class="q-pt-none">
+            <div class="modal-body">
             <q-input 
               type="password" 
               filled 
@@ -97,22 +97,23 @@
               :error="contraseñanuevaError"
               error-message="La nueva contraseña es requerida" 
             />
-          </q-card-section>
-          <q-separator />
+          </div>
+        </q-card-section>
+          <div class="modal-footer">
           <q-card-actions align="right">
             <q-btn flat label="Cerrar" color="primary" v-close-popup @click="cerrarChangePasswordDialog" />
-            <q-btn flat label="Cambiar Contraseña" color="primary" @click="restablecerContraseña" :loading="loadingGuardar" />
+            <q-btn flat label="Cambiar Contraseña" color="green-7" @click="restablecerContraseña" :loading="loadingGuardar" />
           </q-card-actions>
+          </div>
         </q-card>
       </q-dialog>
 
       <!-- Diálogo para editar perfil -->
       <q-dialog v-model="editDialog">
-        <q-card>
-          <q-card-section>
-            <div class="text-h6">Editar Perfil</div>
-          </q-card-section>
+        <q-card class="modal-card">
+            <div class="modal-header">Editar Perfil</div>
           <q-separator />
+          <div class="modal-body">
           <q-card-section class="q-pt-none">
             <q-input 
               filled 
@@ -133,11 +134,14 @@
               error-message="Ingrese un correo electrónico válido" 
             />
           </q-card-section>
+          </div>
           <q-separator />
+          <div class="modal-footer">
           <q-card-actions align="right">
             <q-btn flat label="Cancelar" color="primary" v-close-popup @click="cerrarEditDialog" />
-            <q-btn flat label="Guardar" color="primary" @click="editarUsuario" :loading="loadingGuardar" />
+            <q-btn flat label="Guardar" color="green-7" @click="editarUsuario" :loading="loadingGuardar" />
           </q-card-actions>
+          </div>
         </q-card>
       </q-dialog>
     </div>
@@ -173,8 +177,8 @@ const emailError = ref(false);
 
 
 const newPhoto = ref(null);
-const photo = ref('https://as1.ftcdn.net/v2/jpg/01/12/09/12/1000_F_112091233_xghsriqmHzk4sq71lWBL4q0e7n9QJKX6.jpg');
-const coverPhoto = ref('https://images.unsplash.com/photo-1557683316-973673baf926?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1080&q=80');
+const photo = ref('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWoms2HEy0ELPrZGRr001PN2sh5sq9dU_BWQ&s');
+const coverPhoto = ref('https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');
 
 // Variables de control
 const loadingGuardar = ref(false);
@@ -355,8 +359,24 @@ const Salir = () => {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #f4f6f9;
+  background-color: #e4fff6;
   padding: 20px;
+}
+
+#atras {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  background-color: rgb(8, 73, 55);
+  color: white;
+  margin-left: 3%;
+  margin-bottom: 0px;
+  margin-top: 4%;
+  position: fixed;
 }
 
 .back-button {
@@ -369,6 +389,8 @@ const Salir = () => {
 .profile-container {
   width: 100%;
   max-width: 600px;
+  padding-top: 30px;
+  padding-bottom: 150px;
 }
 
 .profile-card {
@@ -426,6 +448,7 @@ const Salir = () => {
   font-weight: 600;
   color: #333;
   text-align: center;
+  margin-bottom: 0px;
 }
 
 .profile-title {
@@ -456,6 +479,8 @@ const Salir = () => {
   margin: 20px 0;
   display: flex;
   justify-content: center;
+  margin-top: 50px;
+  margin-bottom: 50px;
 }
 
 .profile-actions .q-btn {
@@ -476,6 +501,38 @@ const Salir = () => {
 
 .social-links .q-btn {
   margin: 0 5px;
+}
+
+.modal-card {
+  max-width: 400px;
+  width: 100%;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  background-color: #f8f9fa;
+}
+
+
+
+.modal-header {
+  background-color: #2F7D32;
+  color: white;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  padding: 16px;
+  font-weight: bold !important;
+  font-size: 18px;
+  text-align: center;
+}
+
+.modal-body {
+  padding: 35px;
+}
+
+.modal-footer {
+  padding: 16px;
+  background-color: #f1f1f1;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
 }
 
 /* Estilos responsivos */
