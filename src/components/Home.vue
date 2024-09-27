@@ -43,12 +43,12 @@
                 <q-item-section>USUARIOS</q-item-section>
               </q-item>
 
-              <q-item clickable to="/aprendiz" v-ripple class="menu-button">
-                <q-item-section avatar>
-                  <q-icon name="school" />
-                </q-item-section>
-                <q-item-section>APRENDICES</q-item-section>
-              </q-item>
+    <q-item clickable to="/aprendiz" v-ripple class="menu-button">
+      <q-item-section avatar>
+        <q-icon name="school" />
+      </q-item-section>
+      <q-item-section>APRENDICES</q-item-section>
+    </q-item>
 
               <q-item clickable to="/fichas" v-ripple class="menu-button">
                 <q-item-section avatar>
@@ -79,6 +79,14 @@
               </q-item>
             </q-list>
           </q-scroll-area>
+  <q-item clickable to="/informes" v-ripple class="menu-button">
+    <q-item-section avatar>
+      <q-icon name="assessment" />
+    </q-item-section>
+    <q-item-section>INFORMES</q-item-section>
+  </q-item>
+</q-list>
+</q-scroll-area>
         </q-drawer>
 
         <div>
@@ -240,19 +248,23 @@ hr {
   border-radius: 8px;
   padding: 10px;
   margin-bottom: 15px;
-  text-align: center;
   font-weight: bold;
   width: 95%;
-  justify-content: center;
-  align-items: center;
   display: flex;
-  flex-direction: column;
+  flex-direction: row; /* Cambia la dirección a fila */
+  align-items: center; /* Alinea los elementos verticalmente */
+  justify-content: flex-start; /* Alinea los elementos a la izquierda */
   margin-left: 2%;
+}
+
+.menu-button q-icon {
+  margin-right: 10px; /* Espacio entre el icono y el texto */
 }
 
 .menu-button:hover {
   background-color: #276527;
 }
+
 
 .cards {
   width: 80%;

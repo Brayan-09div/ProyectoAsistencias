@@ -29,9 +29,11 @@
         </template>
         <template v-slot:body-cell-estado="props">
           <q-td :props="props">
-            <q-btn @click="Activar(props.row._id)" :color="props.row.estado == 1 ? 'green' : 'red'">
-              {{ props.row.estado == 1 ? 'Activo' : 'Inactivo' }}
-            </q-btn>
+            <q-btn @click="Activar(props.row._id)" :color="props.row.estado == 1 ? 'green' : 'red'":loading="loadingStates[props.row._id]"
+              >
+                <q-spinner v-if="loadingStates[props.row._id]" color="white" size="20px" />
+                {{ props.row.estado == 1 ? 'Activo' : 'Inactivo' }}
+              </q-btn>
           </q-td>
         </template>
       </q-table>
@@ -49,7 +51,7 @@
             <q-input filled v-model="cc" label="CC" :dense="dense" :error="ccError"
               error-message="El CC es requerido" />
             <q-select filled v-model="IdFicha" :options="options" label="Selecciona una ficha" :dense="dense" use-input
-              hide-selected fill-input input-debounce="0" @filter="filterFn">
+              hide-selected fill-input input-debounce="0" @filter="filterFn" style="margin-bottom: 20px;">
               <template v-slot:no-option>
                 <q-item>
                   <q-item-section class="text-grey">
@@ -133,6 +135,8 @@ watch(isDark, (val) => {
   Dark.set(val);
 });
 
+const loadingStates = ref({});
+
 const rows = ref([]);
 
 onBeforeMount(() => {
@@ -200,9 +204,16 @@ function cerrar() {
   telefonoError.value = false;
 }
 
-async function Activar(id) {
-  await useAprendiz.activarDesactivarAprendiz(id);
-  await traer();
+async function Activar(id, row) {
+  loadingStates.value[id] = true;  // Activar el spinner solo para el botón correspondiente
+  try {
+    await useAprendiz.activarDesactivarAprendiz(id);  // Cambiar el estado de la ficha
+    await traer();  // Actualizar la tabla
+  } catch (error) {
+    console.error("Error al cambiar el estado:", error);
+  } finally {
+    loadingStates.value[id] = false;  // Desactivar el spinner solo para el botón correspondiente
+  }
 }
 
 async function crearAprendiz() {
