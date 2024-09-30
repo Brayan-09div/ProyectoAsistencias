@@ -27,7 +27,7 @@ const routes = [
         { path: '/informes', component: Informes },
     ] },
     
-    {path: '/isncripcion',  component: inscripcion},
+    {path: '/inscripcion',  component: inscripcion},
     {path: '/',  component: loguin},
     {path: '/recuperar',  component: recuperar},
     {path: '/enviarCorreo',  component: enviarCorreo},

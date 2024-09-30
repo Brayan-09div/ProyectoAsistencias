@@ -146,9 +146,14 @@ async function traer() {
         const dia = String(fecha.getDate()).padStart(2, '0');
         const mes = String(fecha.getMonth() + 1).padStart(2, '0');
         const año = fecha.getFullYear();
-        bitacora.fecha = `${dia}/${mes}/${año}`;
+        const horas = String(fecha.getHours()).padStart(2, '0');
+        const minutos = String(fecha.getMinutes()).padStart(2, '0');
+        const segundos = String(fecha.getSeconds()).padStart(2, '0');
+
+        // Formato de fecha y hora
+        bitacora.fecha = `${dia}/${mes}/${año} ${horas}:${minutos}:${segundos}`;
         return bitacora;
-    });
+      });
 }
 
 async function listarBitacorasAprendiz() {
@@ -159,13 +164,18 @@ async function listarBitacorasAprendiz() {
 
         if (!res?.response?.data?.errors) {
             rows.value = res.map(bitacora => {
-                const fecha = new Date(bitacora.fecha);
-                const dia = String(fecha.getDate()).padStart(2, '0');
-                const mes = String(fecha.getMonth() + 1).padStart(2, '0');
-                const año = fecha.getFullYear();
-                bitacora.fecha = `${dia}/${mes}/${año}`;
-                return bitacora;
-            });
+        const fecha = new Date(bitacora.fecha);
+        const dia = String(fecha.getDate()).padStart(2, '0');
+        const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+        const año = fecha.getFullYear();
+        const horas = String(fecha.getHours()).padStart(2, '0');
+        const minutos = String(fecha.getMinutes()).padStart(2, '0');
+        const segundos = String(fecha.getSeconds()).padStart(2, '0');
+
+        // Formato de fecha y hora
+        bitacora.fecha = `${dia}/${mes}/${año} ${horas}:${minutos}:${segundos}`;
+        return bitacora;
+      });
             fixed.value = false;
         }
     } catch (error) {

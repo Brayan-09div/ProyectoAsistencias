@@ -13,6 +13,7 @@
       <button id="btnlist" @click="abrirModal2()">LISTAR FICHA</button>
       <button id="btnlist" @click="abrirModal3()">LISTAR APRENDIZ</button>
       <button id="btnlist" @click="abrirModal4()">LISTAR FECHA</button>
+      <button id="btnlist" @click="abrirModal5()">LISTAR FICHA Y FECHA</button>
 
 
       <q-dialog v-model="mostrarModal1" persistent>
@@ -96,6 +97,29 @@
           <q-card-actions align="right">
           <q-btn id="cierra" flat label="Cerrar" color="primary" v-close-popup @click="cerrarModal" />
           <q-btn id="lista" flat label="Listar" color="primary" @click="listarFecha()" />
+        </q-card-actions>
+       </div>
+       </q-card>
+      </q-dialog>
+
+
+
+      <q-dialog v-model="mostrarModal5" persistent>
+        <q-card class="modal-card">
+        <div class="modal-header">Listar Fecha y Ficha</div>
+        <div class="modal-body">
+          <div class="filtroFichas">
+            <q-select rounded outlined v-model="IdFicha" use-input hide-selected fill-input input-debounce="0"
+              :options="options" @filter="filterFichas" label="Selecciona una ficha" />
+          </div>
+          <div class="fecha1">
+            <q-input v-model="fecha" filled type="date" />
+          </div>
+    </div>
+    <div class="modal-footer">
+          <q-card-actions align="right">
+          <q-btn id="cierra" flat label="Cerrar" color="primary" v-close-popup @click="cerrarModal" />
+          <q-btn id="lista" flat label="Listar" color="primary" @click="listarBitacorasFichaFecha()" />
         </q-card-actions>
        </div>
        </q-card>
@@ -212,7 +236,7 @@ const mostrarModal1 = ref(false);
 const mostrarModal2 = ref(false);
 const mostrarModal3 = ref(false);
 const mostrarModal4 = ref(false);
-
+const mostrarModal5 = ref(false);
 
 
 watch(isDark, val => Dark.set(val));
@@ -255,13 +279,17 @@ async function traer() {
   }));
 
   rows.value = res.map(bitacora => {
-    const fecha = new Date(bitacora.fecha);
-    const dia = String(fecha.getDate()).padStart(2, '0');
-    const mes = String(fecha.getMonth() + 1).padStart(2, '0');
-    const año = fecha.getFullYear();
-    bitacora.fecha = `${dia}/${mes}/${año}`;
-    return bitacora;
-  });
+  const fecha = new Date(bitacora.fecha);
+  const dia = String(fecha.getDate()).padStart(2, '0');
+  const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+  const año = fecha.getFullYear();
+  const horas = String(fecha.getHours()).padStart(2, '0');
+  const minutos = String(fecha.getMinutes()).padStart(2, '0');
+  const segundos = String(fecha.getSeconds()).padStart(2, '0');
+  
+  bitacora.fecha = `${dia}/${mes}/${año} ${horas}:${minutos}:${segundos}`;
+  return bitacora;
+});
 }
 
 async function listarFechas() {
@@ -274,7 +302,12 @@ async function listarFechas() {
         const dia = String(fecha.getDate()).padStart(2, '0');
         const mes = String(fecha.getMonth() + 1).padStart(2, '0');
         const año = fecha.getFullYear();
-        bitacora.fecha = `${dia}/${mes}/${año}`;
+        const horas = String(fecha.getHours()).padStart(2, '0');
+        const minutos = String(fecha.getMinutes()).padStart(2, '0');
+        const segundos = String(fecha.getSeconds()).padStart(2, '0');
+
+        // Formato de fecha y hora
+        bitacora.fecha = `${dia}/${mes}/${año} ${horas}:${minutos}:${segundos}`;
         return bitacora;
       });
       fixed.value = false;
@@ -289,6 +322,7 @@ async function listarFechas() {
   mostrarModal1.value = false;
 }
 
+
 async function listarFecha() {
   try {
     const res = await useBitacora.listarBitacorasFechaUnica(fecha.value);
@@ -299,7 +333,12 @@ async function listarFecha() {
         const dia = String(fecha.getDate()).padStart(2, '0');
         const mes = String(fecha.getMonth() + 1).padStart(2, '0');
         const año = fecha.getFullYear();
-        bitacora.fecha = `${dia}/${mes}/${año}`;
+        const horas = String(fecha.getHours()).padStart(2, '0');
+        const minutos = String(fecha.getMinutes()).padStart(2, '0');
+        const segundos = String(fecha.getSeconds()).padStart(2, '0');
+
+        // Formato de fecha y hora
+        bitacora.fecha = `${dia}/${mes}/${año} ${horas}:${minutos}:${segundos}`;
         return bitacora;
       });
       fixed.value = false;
@@ -324,7 +363,12 @@ async function listarBitacorasFicha() {
         const dia = String(fecha.getDate()).padStart(2, '0');
         const mes = String(fecha.getMonth() + 1).padStart(2, '0');
         const año = fecha.getFullYear();
-        bitacora.fecha = `${dia}/${mes}/${año}`;
+        const horas = String(fecha.getHours()).padStart(2, '0');
+        const minutos = String(fecha.getMinutes()).padStart(2, '0');
+        const segundos = String(fecha.getSeconds()).padStart(2, '0');
+
+        // Formato de fecha y hora
+        bitacora.fecha = `${dia}/${mes}/${año} ${horas}:${minutos}:${segundos}`;
         return bitacora;
       });
       fixed.value = false;
@@ -352,7 +396,12 @@ async function listarBitacorasAprendiz() {
         const dia = String(fecha.getDate()).padStart(2, '0');
         const mes = String(fecha.getMonth() + 1).padStart(2, '0');
         const año = fecha.getFullYear();
-        bitacora.fecha = `${dia}/${mes}/${año}`;
+        const horas = String(fecha.getHours()).padStart(2, '0');
+        const minutos = String(fecha.getMinutes()).padStart(2, '0');
+        const segundos = String(fecha.getSeconds()).padStart(2, '0');
+
+        // Formato de fecha y hora
+        bitacora.fecha = `${dia}/${mes}/${año} ${horas}:${minutos}:${segundos}`;
         return bitacora;
       });
       fixed.value = false;
@@ -416,6 +465,36 @@ const columns = ref([
   { name: 'estado', align: 'center', label: 'ESTADO', field: 'estado', sortable: true },
 ]);
 
+const loadingListar = ref(false); // Estado de carga para el botón Listar
+
+async function listarBitacorasFichaFecha() {
+  if (IdFicha.value === '') {
+    return;
+  }
+  loadingListar.value = true; // Mostrar spinner en el botón
+
+  try {
+    const res = await useBitacora.listarBitacoraFechaFicha(IdFicha.value.value, fecha.value);
+    rows.value = res.map(bitacora => {
+        const fecha = new Date(bitacora.fecha);
+        const dia = String(fecha.getDate()).padStart(2, '0');
+        const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+        const año = fecha.getFullYear();
+        const horas = String(fecha.getHours()).padStart(2, '0');
+        const minutos = String(fecha.getMinutes()).padStart(2, '0');
+        const segundos = String(fecha.getSeconds()).padStart(2, '0');
+
+        // Formato de fecha y hora
+        bitacora.fecha = `${dia}/${mes}/${año} ${horas}:${minutos}:${segundos}`;
+        return bitacora;
+      });
+  } catch (error) {
+    console.error("Error al listar bitácoras:", error);
+  } finally {
+    loadingListar.value = false; // Ocultar spinner después de la carga
+  }
+  mostrarModal5.value = false;
+}
 
 function abrirModal1() {
   mostrarModal1.value = true; // Abre el modal
@@ -433,9 +512,12 @@ function abrirModal4() {
   mostrarModal4.value = true; // Abre el modal
 }
 
-function cerrarModal() {
-  mostrarModal.value = false; // Cierra el modal
+function abrirModal5() {
+  mostrarModal5.value = true; 
 }
+
+
+
 
 const Salir = async () => {
   router.replace("/home")

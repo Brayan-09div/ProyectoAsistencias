@@ -9,6 +9,7 @@ export const useUsuariosStore = defineStore(
     let xtoken = ref("");
     let usuarios = ref("");
     let loading = ref("");
+    let avatar = ref("");
     const loguin = async (email, password) => {
       try {
         let r = await axios.post("/Usuarios/login", {
@@ -16,7 +17,9 @@ export const useUsuariosStore = defineStore(
           password: password,
         });
         xtoken.value = r.data.token;
-        usuarios.value = r.data;
+        usuarios.value = r.data.usuario;
+        avatar.value = r.data.avatar;
+
         Notify.create({
           type: "positive",
           message: "Loguin exitoso",
@@ -96,6 +99,7 @@ export const useUsuariosStore = defineStore(
               }
           );
           console.log(r);
+          avatar.value = r.data.avatar;
           return r;
       } catch (error) {
           console.log(error);
@@ -300,6 +304,7 @@ export const useUsuariosStore = defineStore(
       cambiarPassword,
       updatecoul,
       cargarcould,
+      avatar,
       xtoken,
       usuarios,
     };

@@ -181,6 +181,10 @@ async function activar(id, row) {
 }
 
 async function crearFicha() {
+
+  num.value = num.value.trim();
+  cod.value = cod.value.trim();
+
   numError.value = !num.value;
   codError.value = !cod.value;
 

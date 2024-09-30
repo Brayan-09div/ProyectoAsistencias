@@ -15,7 +15,7 @@ import 'quasar/src/css/index.sass'
 // and placed in same folder as main.js
 import App from './App.vue'
 axios.defaults.baseURL = "http://localhost:4500/api";
-
+// axios.defaults.baseURL = "https://asistencias-kg3c.onrender.com/api";
 
 const myApp = createApp(App)
 const pinia = createPinia()

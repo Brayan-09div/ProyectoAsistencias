@@ -221,14 +221,25 @@ async function activar(id, row) {
   }
 }
 
+function validateInput(refValue) {
+  if (refValue.value.trim() === "") {
+    refValue.value = ""; // Reiniciar el valor a vacío
+  }
+}
+
 async function crearUsuario() {
+  nom.value = nom.value.trim();  
+  email.value = email.value.trim();  
+  password.value = password.value.trim();  
+
   nomError.value = !nom.value;
   emailError.value = !email.value || !email.value.includes('@');
-  passwordError.value = !password.value && !b.value; // La contraseña es requerida solo si no es una edición
+  passwordError.value = !password.value && !b.value; 
 
   if (nomError.value || emailError.value || passwordError.value) {
     return;
   }
+  
   loadingGuardar.value = true;
   try {
     if (b.value) {
@@ -257,6 +268,7 @@ async function crearUsuario() {
     loadingGuardar.value = false;
   }
 }
+
 
 async function eliminarUsuario() {
   try {

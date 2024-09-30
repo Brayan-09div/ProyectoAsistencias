@@ -26,9 +26,10 @@ export const useBitacoraStore = defineStore("bitacora", () => {
       return r.data;
     } catch (error) {
       console.log(error);
+       const errorMessage = error.response?.data?.error || "Error al crear la bitácora"
       Notify.create({
         type: "negative",
-        message: "Hubo un error al crear la bitácora",
+        message: errorMessage,
       });
       return error;
     }

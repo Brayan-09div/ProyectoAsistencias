@@ -217,6 +217,12 @@ async function Activar(id, row) {
 }
 
 async function crearAprendiz() {
+  
+  nom.value = nom.value.trim();
+  cc.value = cc.value.trim();
+  email.value = email.value.trim();
+  telefono.value = telefono.value.trim();
+
   nomError.value = !nom.value;
   ccError.value = !cc.value;
   emailError.value = !email.value;

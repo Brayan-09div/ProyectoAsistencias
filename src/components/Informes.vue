@@ -50,11 +50,10 @@
         </div>
         <q-table :rows="rows" :columns="columns" row-key="_id">
           <template v-slot:body-cell-estado="props">
-            <q-td :props="props">
-              <q-select v-model="props.row.estado" :options="['pendiente', 'asistió', 'faltó', 'excusa']"
-                @update:model-value="cambiarEstado(props.row._id, props.row.estado)" />
-            </q-td>
-          </template>
+                        <q-td :props="props">
+                            {{ props.row.estado }}
+                        </q-td>
+                    </template>
           <template v-slot:header-cell="props">
             <q-th :props="props" :style="{ fontWeight: 'bold', color: 'black', fontSize: '14px' }">
               {{ props.col.label }}
@@ -152,13 +151,18 @@ async function traer() {
     }));
 
     rows.value = res.map(bitacora => {
-      const fecha = new Date(bitacora.fecha);
-      const dia = String(fecha.getDate()).padStart(2, '0');
-      const mes = String(fecha.getMonth() + 1).padStart(2, '0');
-      const año = fecha.getFullYear();
-      bitacora.fecha = `${dia}/${mes}/${año}`;
-      return bitacora;
-    });
+        const fecha = new Date(bitacora.fecha);
+        const dia = String(fecha.getDate()).padStart(2, '0');
+        const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+        const año = fecha.getFullYear();
+        const horas = String(fecha.getHours()).padStart(2, '0');
+        const minutos = String(fecha.getMinutes()).padStart(2, '0');
+        const segundos = String(fecha.getSeconds()).padStart(2, '0');
+
+        // Formato de fecha y hora
+        bitacora.fecha = `${dia}/${mes}/${año} ${horas}:${minutos}:${segundos}`;
+        return bitacora;
+      });
   } catch (error) {
     console.error("Error al cargar los datos:", error);
   } finally {
@@ -176,13 +180,18 @@ async function listarBitacorasFichaFecha() {
   try {
     const res = await useBitacora.listarBitacoraFechaFicha(IdFicha.value.value, fecha.value);
     rows.value = res.map(bitacora => {
-      const fecha = new Date(bitacora.fecha);
-      const dia = String(fecha.getDate()).padStart(2, '0');
-      const mes = String(fecha.getMonth() + 1).padStart(2, '0');
-      const año = fecha.getFullYear();
-      bitacora.fecha = `${dia}/${mes}/${año}`;
-      return bitacora;
-    });
+        const fecha = new Date(bitacora.fecha);
+        const dia = String(fecha.getDate()).padStart(2, '0');
+        const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+        const año = fecha.getFullYear();
+        const horas = String(fecha.getHours()).padStart(2, '0');
+        const minutos = String(fecha.getMinutes()).padStart(2, '0');
+        const segundos = String(fecha.getSeconds()).padStart(2, '0');
+
+        // Formato de fecha y hora
+        bitacora.fecha = `${dia}/${mes}/${año} ${horas}:${minutos}:${segundos}`;
+        return bitacora;
+      });
     datosListados.value = true; // Marcar datos como listados
   } catch (error) {
     console.error("Error al listar bitácoras:", error);
@@ -192,21 +201,21 @@ async function listarBitacorasFichaFecha() {
   }
 }
 
-function cambiarEstado(id, nuevoEstado) {
-  useBitacora.cambiaEstado(id, nuevoEstado)
-    .then(() => {
-      if (IdFicha.value && fecha.value) {
-        // Si hay filtro por ficha y fecha, volvemos a listar con el filtro
-        listarBitacorasFichaFecha();
-      } else {
-        // Si no hay filtro, cargamos todos los datos
-        traer();
-      }
-    })
-    .catch(error => {
-      console.error('Error al cambiar estado:', error);
-    });
-}
+// function cambiarEstado(id, nuevoEstado) {
+//   useBitacora.cambiaEstado(id, nuevoEstado)
+//     .then(() => {
+//       if (IdFicha.value && fecha.value) {
+//         // Si hay filtro por ficha y fecha, volvemos a listar con el filtro
+//         listarBitacorasFichaFecha();
+//       } else {
+//         // Si no hay filtro, cargamos todos los datos
+//         traer();
+//       }
+//     })
+//     .catch(error => {
+//       console.error('Error al cambiar estado:', error);
+//     });
+// }
 
 
 function crearPDF() {
