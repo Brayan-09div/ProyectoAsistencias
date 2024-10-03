@@ -477,4 +477,8 @@ hr {
   height: 200px;
   /* Ajusta el tamaño según lo necesario */
 }
+
+.q-field--outlined.q-field--rounded .q-field__control {
+    border-radius: 0px;
+}
 </style>

@@ -39,7 +39,7 @@
       <q-card class="modal-card">
         <div class="modal-header">Listar Ficha</div>
         <div class="modal-body">
-        <q-select rounded outlined v-model="IdFicha" use-input hide-selected fill-input input-debounce="0"
+        <q-select id="select" rounded outlined v-model="IdFicha" use-input hide-selected fill-input input-debounce="0"
                 :options="options" @filter="filterFichas" label="Selecciona una ficha">
                 <template v-slot:no-option>
                   <q-item>
@@ -65,7 +65,7 @@
         <q-card class="modal-card">
         <div class="modal-header">Listar Aprendiz</div>
         <div class="modal-body">
-         <q-select rounded outlined v-model="idAprendis" use-input hide-selected fill-input input-debounce="0"
+         <q-select id="select" rounded outlined v-model="idAprendis" use-input hide-selected fill-input input-debounce="0"
                 :options="optionsAprendiz" @filter="filterAprendiz" label="Selecciona un aprendiz">
                 <template v-slot:no-option>
                   <q-item>
@@ -109,7 +109,7 @@
         <div class="modal-header">Listar Fecha y Ficha</div>
         <div class="modal-body">
           <div class="filtroFichas">
-            <q-select rounded outlined v-model="IdFicha" use-input hide-selected fill-input input-debounce="0"
+            <q-select id="select" rounded outlined v-model="IdFicha" use-input hide-selected fill-input input-debounce="0"
               :options="options" @filter="filterFichas" label="Selecciona una ficha" />
           </div>
           <div class="fecha1">
@@ -650,5 +650,9 @@ function cerrar() {
   border: 0px;
   height: 34px;
   width: 140px;
+}
+
+#select{
+  border-radius: 0px !important;
 }
 </style>

@@ -1,29 +1,21 @@
 <template>
   <div class="table-container">
-    <!-- Sección superior -->
-    <div class="header-section">
-      <table class="header-table">
-        <thead>
-          <tr>
-            <th class="logo-cell">
-              <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWoms2HEy0ELPrZGRr001PN2sh5sq9dU_BWQ&s" alt="Logo" class="logo"/>
-            </th>
-            <th colspan="10" class="header-text">
-              REGISTRO DE ASISTENCIA Y APROBACIÓN DEL ACTA No-
-            </th>
-          </tr>
-          <tr>
-            <th colspan="5" class="header-details">Fecha: {{ bitacoras.fecha }}</th>
-            <th colspan="7" class="header-details">Nombre: {{ bitacoras.data[0].IdAprendis.IdFicha.nombre }}</th>
-          </tr>
-        </thead>
-      </table>
-    </div>
-
-    <!-- Tabla de datos -->
+    <!-- Tabla completa con encabezado -->
     <div class="table-wrapper">
       <table class="data-table">
         <thead>
+          <!-- Primera fila con el título -->
+          <tr>
+            <th colspan="11" class="header-title">
+              REGISTRO DE ASISTENCIA Y APROBACIÓN DEL ACTA No-
+            </th>
+          </tr>
+          <!-- Segunda fila con detalles de la fecha y nombre -->
+          <tr>
+            <th colspan="5" class="header-details">Fecha: {{ bitacoras.fecha }}</th>
+            <th colspan="6" class="header-details">Nombre: {{ bitacoras.data[0]?.IdAprendis?.IdFicha?.nombre || 'Nombre' }}</th>
+          </tr>
+          <!-- Encabezados de las columnas -->
           <tr>
             <th>No.</th>
             <th>NOMBRES Y APELLIDOS</th>
@@ -39,6 +31,7 @@
           </tr>
         </thead>
         <tbody>
+          <!-- Filas dinámicas según la información disponible -->
           <tr v-for="(bitacora, index) in bitacoras.data" :key="bitacora._id">
             <td>{{ index + 1 }}</td>
             <td>{{ bitacora.IdAprendis.nombre }}</td>
@@ -61,6 +54,11 @@
               </div>
               <span v-else class="no-firma">No disponible</span>
             </td>
+          </tr>
+          <!-- Filas vacías hasta llegar a 27 -->
+          <tr v-for="n in (27 - bitacoras.data.length)" :key="`empty-${n}`">
+            <td>{{ bitacoras.data.length + n }}</td>
+            <td colspan="10"></td> <!-- Columnas vacías -->
           </tr>
         </tbody>
       </table>
@@ -111,44 +109,6 @@ const handleImageError = (event) => {
   background-color: #fff;
 }
 
-.header-section {
-  margin-bottom: 20px;
-}
-
-.header-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.header-table th {
-  background-color: #e0f2f1;
-  padding: 10px;
-  text-align: left;
-  font-weight: normal;
-  vertical-align: middle;
-}
-
-.logo-cell {
-  width: 10%;
-  text-align: left;
-  padding: 5px;
-}
-
-.logo {
-  max-width: 100px; /* Ajusta el tamaño del logo según sea necesario */
-  height: auto;
-}
-
-.header-text {
-  text-align: center;
-  font-size: 14px;
-}
-
-.header-details {
-  font-weight: bold;
-  font-size: 14px;
-}
-
 .table-wrapper {
   width: 100%;
 }
@@ -160,14 +120,28 @@ const handleImageError = (event) => {
 }
 
 .data-table th, .data-table td {
-  border: 1px solid #ddd;
+  border: 1px solid #000000;
   padding: 8px;
   text-align: center; /* Centrar el texto */
 }
 
+.header-title {
+  background-color: #e0f2f1;
+  padding: 10px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.header-details {
+  font-weight: bold;
+  font-size: 14px;
+  text-align: left;
+}
+
 .data-table th {
-  background-color: #2F7D32;
-  color: #fff;
+  background-color: #ffffff;
+  color: #000000;
   font-weight: bold;
 }
 
@@ -219,9 +193,8 @@ const handleImageError = (event) => {
     padding: 5px;
   }
 
-  .header-table th {
+  .header-details {
     font-size: 12px;
-    padding: 5px;
   }
 }
 
@@ -231,9 +204,8 @@ const handleImageError = (event) => {
     padding: 4px;
   }
 
-  .header-table th {
+  .header-details {
     font-size: 10px;
-    padding: 4px;
   }
 
   .table-container {
